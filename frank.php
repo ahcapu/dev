@@ -440,6 +440,10 @@ class Frank extends CarrierModule
         $deliveryAddress = new Address((int)$this->context->cart->id_address_delivery);
         $addressArray = (array) $deliveryAddress;
 
+        $id_customer=$order->id_customer;
+        $customer= new Customer((int)$id_customer);
+//        echo '<pre>'; print_r($customer->email); die();
+
 
         $orderDetail = $this->getOrderDetail($order->id);
 
@@ -512,7 +516,7 @@ class Frank extends CarrierModule
                     [
                         'name' => $addressArray['firstname'] . ' ' . $addressArray['lastname'],
                         'number' => !empty($addressArray['phone']) ? $addressArray['phone'] : '',
-                        'email' => $addressArray['email'],
+                        'email' => $customer->email,
                         'countryCode' => '92'
                     ],
 

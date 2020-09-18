@@ -1,4 +1,4 @@
-$(document).ready(function (){
+$(document).ready(function () {
     document.getElementById('tab-btn1').addEventListener('click', function (){
         showPanel(0, '#dee3e8');
     });
@@ -11,9 +11,9 @@ $(document).ready(function (){
         showPanel(2, '#dee3e8');
     });
 
-    let tabButtons = document.querySelectorAll('.tabs .buttonContainer button');
+    let tabButtons = document.querySelectorAll('.tabs-container .buttonContainer button');
 
-    let tabPanels = document.querySelectorAll('.tabs .tabPanel');
+    let tabPanels = document.querySelectorAll('.tabs-container .tabPanel');
 
     function showPanel(panelIndex, colorCode) {
         tabButtons.forEach(function(node){

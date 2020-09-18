@@ -233,6 +233,7 @@
             <label for="dropoff_address" style="padding: 10px 10px 0 22px; color: #e07047; font-weight: bold;">Dropoff address</label>
             <br>
             <input type="text" name="dropoff_address" id="dropoff_address"  style="margin: 10px 10px 10px 20px; border: 2px solid #dee3e8; border-radius: 9px 9px 9px 9px; height: 24px; width: 250px">
+
             <input type="hidden" name="new-shipment-lat" id="new-shipment-lat">
             <input type="hidden" name="new-shipment-lng" id="new-shipment-lng">
 

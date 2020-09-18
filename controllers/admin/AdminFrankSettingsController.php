@@ -27,9 +27,13 @@ class AdminFrankSettingsController extends ModuleAdminController
 
     public function initContent()
     {
+        $api_email_addresses = json_decode($this->frank_api->getRequests('https://p-post.herokuapp.com/api/v1/stores/myprofile/' . Configuration::get('FRANK_ID'), Configuration::get('FRANK_TOKEN')), true);
         parent::initContent();
-        $this->context->smarty->assign(array());
-
+        $this->context->smarty->assign(
+            array(
+                'api_email_addresses' => $api_email_addresses['data']['emailAddresses'],
+            )
+        );
 
         $this->setTemplate('settings.tpl');
 
@@ -38,6 +42,7 @@ class AdminFrankSettingsController extends ModuleAdminController
     public function setMedia($isNewTheme = false)
     {
         $this->addJquery();
+//        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/bootstrap.css');
         $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/settings.css');
         $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/settings.js');
         parent::setMedia();

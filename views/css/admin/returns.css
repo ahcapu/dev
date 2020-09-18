@@ -1,76 +1,51 @@
-.bootstrap .page-head {
-    display: none;
-}
-.bootstrap a {color: unset !important;}
 
-/*Container Header section start*/
-.bootstrap .container-header {
-    margin-top: -114px;
-    background-color: white;
-    width: 1140px;
+.nobootstrap { min-width: unset; padding: unset;}
+.bootstrap .page-head>.wrapper { display: none; }
+.bootstrap .page-head {height: 10px;}
+body {
+    background-color: #dee2e8;
+}
+
+.bootstrap .row {padding-left: 15px;}
+.frank {
+    height: auto;
+}
+
+.frank .container-header {
+    margin-top: -105px;
+    width: 100%;
     height: 100px;
-    padding-top: 10px;
-    margin-left: -15px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 2fr 0.5fr 4fr 0.3fr 0.3fr;
+    background-color: white;
 }
 
-.bootstrap .container-header .shipping-link {
-    text-decoration: none;
-    color: #a7a7a7!important;
-    float: left;
-    padding: 27px 35px 0 70px;
-    font-size: 15px
+.frank .container-header > div {align-self: center}
+.frank .container-header > div > a {text-decoration: none; color: #e07047; }
+.frank .container-header .frank-logo { font-size: 20px; font-weight: bold; }
+
+.frank .frank-shipping{font-weight: bold; }
+.frank .frank-returns{font-weight: bold; }
+.frank .frank-chart{justify-self: center; }
+.frank .frank-settings{justify-self: center; }
+
+.frank .mid-header {
+    margin-top: 30px;
 }
 
-.bootstrap .container-header .shipping-link:hover { color: #e07047 !important; }
-
-.bootstrap .container-header .returns-link {
-    text-decoration: none;
-    color: #a7a7a7!important;
-    float: left;
-    padding-top: 27px;
-    font-size: 15px;
-}
-
-.bootstrap .container-header .returns-link.active{color: #e07047 !important;}
-
-.bootstrap .container-header .returns-link:hover {color: #e07047 !important;}
-/*Container Header section end*/
-
-/*Tab Container section start*/
-
-/*Tab Container section end*/
-
-.tab-container {
-    background-color: #dee3e8;
-    margin-top: -15px;
-    margin-left: -15px;
-    margin-right: -10px;
-    padding-top: 30px;
-    height: 850px;
-}
-
-.tab-container .btn-search {
+.frank .mid-header .btn-search {
     border-bottom-left-radius: 25px;
     border-top-left-radius: 25px;
-    margin-left: 20px;
-    float: left;
     height: 31px;
-    margin-right: -1px;
-    border-right: none;
+    border-right: none!important;
     border-bottom: 2px solid #e07047;
     border-left: 2px solid #e07047;
     border-top: 2px solid #e07047;
     background-color: whitesmoke;
 }
 
-#material-icon {
-    font-size: 20px!important;
-    padding: 4px;
-    color: #e07047;
-}
-
-.tab-container .input-search {
-    display: inline-block!important;
+.frank .mid-header .input-search {
     border-bottom-right-radius: 25px!important;
     border-top-right-radius: 25px!important;
     width: 220px!important;
@@ -82,11 +57,10 @@
     color: #e07047!important;
 }
 
-.tab-container .input-search::placeholder {color: #e07047 !important; opacity: 1; padding-left: 15px }
+.frank .mid-header .input-search::placeholder {color: #e07047 !important; opacity: 1; padding-left: 15px }
 
-.tab-container .btn-new-shipment {
-    display: inline-block!important;
-    float: right;
+.frank .mid-header .btn-new-shipment {
+    /*display: inline-block;*/
     border-radius: 25px;
     border: 2px solid #e07047;
     width: 170px;
@@ -96,29 +70,20 @@
     font-size: 14px;
 }
 
-.tab-container .upload-file {
+.frank .mid-header .upload-file {
     text-decoration: none!important;
-    float: right;
-    margin-top: 15px;
-    margin-right: 30px;
-    margin-left: 10px;
-    color: #e07047!important;
+    color: #e07047;
     font-weight: bold;
+    font-size: 14px;
+    padding-right: 5px;
 }
 
-.tab-container .upload-icon {
-    float: right;
-    margin-top: 12px;
-    margin-left: 30px;
-    color: #e07047!important;
+.frank .tabs-container {
+    height: auto;
+    margin-top: 30px;
 }
 
-.tab-container .tabs {
-    margin-top: 20px;
-    margin-left: 20px;
-}
-
-.tab-container .tabs .buttonContainer button {
+.frank .tabs-container .buttonContainer button {
     width: 100px;
     border: none;
     outline: none;
@@ -167,15 +132,14 @@
 .tabPanelTable tbody tr:nth-child(even)
 { color: #e07047; }
 
-.tab-container .tabs .tabPanel {}
-.tab-container .tabs .btn-support {
-    float: right;
-    margin-right: 35px;
-    margin-top: 35px;
-    width: 140px;
-    height: 35px;
-    border-radius: 25px;
-    border: 2px solid #e07047;
-    background-color: #e07047;
-    color: whitesmoke;
-}
+/*.tabs-container .btn-support {*/
+/*    float: right;*/
+/*    margin-right: 35px;*/
+/*    margin-top: 35px;*/
+/*    width: 140px;*/
+/*    height: 35px;*/
+/*    border-radius: 25px;*/
+/*    border: 2px solid #e07047;*/
+/*    background-color: #e07047;*/
+/*    color: whitesmoke;*/
+/*}*/

@@ -68,6 +68,7 @@ $(document).ready(function () {
         });
     });
 });
+
 var addressArr = [];
 function initMap() {
         var componentForm = {

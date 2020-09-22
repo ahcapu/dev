@@ -28,16 +28,24 @@ class AdminFrankNewShipmentController extends ModuleAdminController
     public function initContent()
     {
         $api_warehouses = json_decode($this->frank_api->getRequests('https://p-post.herokuapp.com/api/v1/stores/warehouse', Configuration::get('FRANK_TOKEN')), true);
+        $shipping = $this->get_ahref('AdminFrankShipping');
+        $returns = $this->get_ahref('AdminFrankReturns');
+        $new_shipment = $this->get_ahref('AdminFrankNewShipment');
+        $settings = $this->get_ahref('AdminFrankSettings');
+
         parent::initContent();
         $this->context->smarty->assign(
             array(
                 'api_warehouses' => $api_warehouses['data'],
+                'shipping' => $shipping,
+                'returns' => $returns,
+                'settings' => $settings,
             )
         );
 
-        if (Tools::isSubmit('create_new_shipping')) {
-            $this->createNewShipment();
-        }
+//        if (Tools::isSubmit('create_new_shipping')) {
+//            $this->createNewShipment();
+//        }
 
 
         $this->setTemplate('newShipment.tpl');

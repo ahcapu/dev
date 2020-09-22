@@ -32,4 +32,32 @@ $(document).ready(function () {
     }
 
     showPanel(0, '#dee3e8');
+
+    $('.pencil').on('click', function (){
+        let page = $(this).attr('data-target');
+        let id = $(this).attr('data-id');
+        // console.log(id);
+        $.ajax({
+            async: false,
+            url: '../modules/frank/pencil_ajax.php',
+            method: 'POST',
+            data: {_id: id},
+            success: function (response) {
+                console.log(response);
+            }
+        });
+        // $('.main-tab-active').removeClass('main-tab-active');
+        // document.getElementById(page).classList.add('main-tab-active');
+
+
+    });
+
+    $('.upload').on('click', function (){
+        document.getElementById('main-page-id').classList.remove('container-main-page-active');
+        document.getElementById('upload-page-id').classList.add('container-upload-page-active');
+    });
+    $('.upload-cancel-btn').on('click', function (){
+        document.getElementById('upload-page-id').classList.remove('container-upload-page-active');
+        document.getElementById('main-page-id').classList.add('container-main-page-active');
+    });
 });

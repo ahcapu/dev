@@ -28,10 +28,17 @@ class AdminFrankSettingsController extends ModuleAdminController
     public function initContent()
     {
         $api_email_addresses = json_decode($this->frank_api->getRequests('https://p-post.herokuapp.com/api/v1/stores/myprofile/' . Configuration::get('FRANK_ID'), Configuration::get('FRANK_TOKEN')), true);
+        $shipping = $this->get_ahref('AdminFrankShipping');
+        $returns = $this->get_ahref('AdminFrankReturns');
+//        $new_shipment = $this->get_ahref('AdminFrankNewShipment');
+        $settings = $this->get_ahref('AdminFrankSettings');
         parent::initContent();
         $this->context->smarty->assign(
             array(
                 'api_email_addresses' => $api_email_addresses['data']['emailAddresses'],
+                'shipping' => $shipping,
+                'returns' => $returns,
+                'settings' => $settings
             )
         );
 

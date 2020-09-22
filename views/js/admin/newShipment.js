@@ -1,7 +1,38 @@
-$(document).ready(function (){
+$(document).ready(function () {
 
     $('#return-checkbox').change(function(){
         $('#can-return-input').toggle();
+    });
+
+    $('.new_shipment_form').on('submit', function (e){
+        e.preventDefault();
+        $form = $(this);
+        $.ajax({
+            url: '../modules/frank/contactDetailAjax.php',
+            method: 'POST',
+            data: $form.serialize(),
+            success: function(response) {
+                response = JSON.parse(response);
+                console.log(response.status);
+                if (response.status === 200) {
+                    $(".new_shipment_form")[0].reset();
+                    e.stopPropagation();
+                    return $.growl.notice({
+                        title: "",
+                        size: "large",
+                        message: "New Shipment added successfully!"
+                    });
+                } else {
+                    e.stopPropagation();
+                    return $.growl.error({
+                        title: "",
+                        size: "large",
+                        message: "Some thing went wrong"
+                    });
+                }
+            },
+        });
+
     });
 
 

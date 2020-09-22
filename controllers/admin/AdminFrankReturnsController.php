@@ -34,9 +34,26 @@ class AdminFrankReturnsController extends ModuleAdminController
 
         $shipping = $this->get_ahref('AdminFrankShipping');
         $returns = $this->get_ahref('AdminFrankReturns');
+        $new_shipment = $this->get_ahref('AdminFrankNewShipment');
+        $settings = $this->get_ahref('AdminFrankSettings');
+        $orderDetails = $this->get_ahref('AdminFrankOrderDetails');
 
         parent::initContent();
-        $this->context->smarty->assign(['api_franks' => $api_franks['data'], 'shipping' => $shipping, 'returns' => $returns]);
+        $this->context->smarty->assign(
+            ['api_franks' => $api_franks['data'],
+                'shipping' => $shipping,
+                'returns' => $returns,
+                'new_shipment' => $new_shipment,
+                'settings' => $settings,
+                'pencil_id' => Configuration::get('pencil_id'),
+                'orderDetails' => $orderDetails
+            ]
+        );
+
+        if (Tools::isSubmit('import_csv_btn')) {
+            $this->uploadFile();
+        }
+
         $this->setTemplate('returns.tpl');
     }
 
@@ -59,5 +76,20 @@ class AdminFrankReturnsController extends ModuleAdminController
         $admin_folder = substr(strrchr($stat, "admin "), 0);
         $token = Tools::getAdminTokenLite($controller);
         return _PS_BASE_URL_.__PS_BASE_URI__.$admin_folder.'/index.php?controller='.$controller.'&token='.$token;
+    }
+
+    private function uploadFile()
+    {
+        if ($_FILES['file']['name']) {
+            $filename= explode('.', $_FILES['file']['name']);
+            if ($filename[1] == 'csv') {
+                $readFile = file_get_contents($_FILES['file']['tmp_name']);
+//                print_r($readFile); die();
+                $params = array(
+                    'csv' => $readFile
+                );
+                $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/createBulkShipment', $params, Configuration::get('FRANK_TOKEN'));
+            }
+        }
     }
 }

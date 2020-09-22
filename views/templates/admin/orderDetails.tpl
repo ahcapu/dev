@@ -24,63 +24,71 @@
     </div>
     <div class="detail-container">
         <div class="status-tab">
-            <div id="active-tab" class="order-placed">
-                1 <a href="#" id="a-active">Order placed</a>
+            <div id="order-placed-main" class="order-placed">
+                1 <a href="#" id="order-placed-href">Order placed</a>
                 <p>{$get_order_by_id['createdAt']|date_format:"%m/%m/%Y"}</p>
             </div>
-            <div class="sent-with">
-                2 <a href="#">Sent with</a>
+            <div id="sent-with-main" class="sent-with">
+                2 <a href="#" id="sent-with-href">Sent with</a>
                 <p>{$get_order_by_id['deliveryType']}</p>
             </div>
-            <div class="delivery-in-progress">
-                3 <a href="#">Delivery in progress</a>
+            <div id="delivery-in-progress-main" class="delivery-in-progress">
+                3 <a href="#" id="delivery-in-progress-href">Delivery in progress</a>
                 <p>{$get_order_by_id['pickupDate']|date_format:"%m/%m/%Y"}</p>
             </div>
-            <div class="delivered">
-                4 <a href="#">Delivered</a>
+            <div id="delivered-main" class="delivered">
+                4 <a href="#" id="delivered-href">Delivered</a>
                 <p>{$get_order_by_id['dropoff']['country']}</p>
             </div>
         </div>
-        <div class="image-map">
-            <div class="product-image">
-                <img src="{$get_order_by_id['commodities'][0]['images'][0]}" alt=""">
+        <div class="row image-map" style="margin: 30px;">
+            <div class="col-sm-2 product-image">
+                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <img class="d-block w-100" src="{$get_order_by_id['commodities'][0]['images'][0]}" alt="First slide" width="100%">
+                            <h5>{$get_order_by_id['commodities'][0]['name']}</h5>
+                            <p>Quantity {$get_order_by_id['commodities'][0]['quantity']}</p>
+                        </div>
+                        {foreach $get_order_by_id['commodities'] as $commodity}
+                            <div class="item">
+                                <img class="d-block w-100" src="{$commodity['images'][0]}" alt="{$commodity['name']}" width="100%">
+                                <h5>{$commodity['name']}</h5>
+                                <p>Quantity {$commodity['quantity']}</p>
+                            </div>
+                        {/foreach}
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
             </div>
-            <div class="order-map" id="map"></div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-9 order-map" id="map"></div>
+
             <input type="hidden" id="pickup_lat" value="{$get_order_by_id['pickup']['location'][1]}">
             <input type="hidden" id="pickup_lng" value="{$get_order_by_id['pickup']['location'][0]}">
 
             <input type="hidden" id="dropoff_lat" value="{$get_order_by_id['dropoff']['location'][1]}">
             <input type="hidden" id="dropoff_lng" value="{$get_order_by_id['dropoff']['location'][0]}">
         </div>
-        <div class="product">
-            <div class="product-name">
-                <p>{$get_order_by_id['commodities'][0]['name']}</p>
-                <p>{$get_order_by_id['commodities'][0]['quantity']}</p>
-                <p>Order number: {$get_order_by_id['orderNumber']}</p>
-            </div>
-            <div class="information">
-                <p>Your delivery information</p>
-                <a href="#">Change</a>
-            </div>
-            <div class="change-address">
-                <p>Won't be home?</p>
-                <a href="#">Change</a>
-            </div>
-        </div>
-        <div class="tracking-detail">
-            <div class="order-number">
-                Tracking number: {$get_order_by_id['orderNumber']}
-            </div>
-            <div class="time-slot">
-                <p>{$get_order_by_id['pickupDate']|date_format:"%m/%m/%Y"}</p>
-            </div>
-            <div class="contact">
-                <p>{$get_order_by_id['contact']['name']}</p>
-                <p>{$get_order_by_id['contact']['number']}</p>
+        <div class="row">
+            <div class="col-sm-2 tracking-number">
+                <div>
+                    <span class="material-icons">account_balance_wallet</span>
+                </div>
+                <div>
+                    <p>Tracking number</p>
+                    <p>{$get_order_by_id['orderNumber']}</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXXUe1UPwcYKHx8L3drP_vJks8zl9kla4&libraries=places&callback=initMap" type="text/javascript"></script>

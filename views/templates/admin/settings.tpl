@@ -10,7 +10,7 @@
             <a href="{$returns}" class="returns-link">Returns</a>
         </div>
         <div class="frank-chart">
-            <a href="#"><i class="material-icons" id="settings">settings</i></a>
+            <a href="{$settings}"><i class="material-icons" id="settings">settings</i></a>
         </div>
         <div class="frank-settings">
             <a href="#"><i class="material-icons">assessment</i></a>

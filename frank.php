@@ -270,6 +270,7 @@ class Frank extends CarrierModule
 
     public function getOrderShippingCost($params, $shipping_cost)
     {
+        $res = null;
         if (Context::getContext()->customer->logged == true && !empty($params->id_carrier))
         {
             $id_address_delivery = Context::getContext()->cart->id_address_delivery;
@@ -361,10 +362,8 @@ class Frank extends CarrierModule
 
             $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/rates', $result, Configuration::get('FRANK_TOKEN'));
             $res = json_decode($res, true);
- 
             return $res['data']['rates']['price'];
         }
-
         return $shipping_cost;
     }
 
@@ -440,10 +439,10 @@ class Frank extends CarrierModule
         $deliveryAddress = new Address((int)$this->context->cart->id_address_delivery);
         $addressArray = (array) $deliveryAddress;
 
+        $carrierName = $this->getCarrierName($order->id);
         $id_customer=$order->id_customer;
         $customer= new Customer((int)$id_customer);
-//        echo '<pre>'; print_r($customer->email); die();
-
+        
 
         $orderDetail = $this->getOrderDetail($order->id);
 
@@ -520,7 +519,7 @@ class Frank extends CarrierModule
                         'countryCode' => '92'
                     ],
 
-                'deliveryType' => 'Frank',
+                'deliveryType' => $carrierName[0]['carrier_name'],
                 'totalWeight' => sprintf("%.2f",$totalWeight),
                 'totalWidth' => sprintf("%.2f",$totalWidth),
                 'totalHeight' => sprintf("%.2f",$totalHeight),
@@ -530,7 +529,6 @@ class Frank extends CarrierModule
                 'storeOrderID' => $order->reference,
                 'store' => Configuration::get('FRANK_ID')
             ];
-//        echo '<pre>'; print_r($result); die();
         $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/addEcommerceOrder', $result, Configuration::get('FRANK_TOKEN'));
 
     }
@@ -598,4 +596,18 @@ class Frank extends CarrierModule
         $array[$key] = $value;
         return $array;
     }
+
+    public function getCarrierName($id_order)
+    {
+        return Db::getInstance()->executeS('
+		SELECT
+		
+		cl.`name` as `carrier_name`
+		FROM `'._DB_PREFIX_.'order_carrier` oc
+		LEFT JOIN `'._DB_PREFIX_.'carrier` cl
+			ON (oc.`id_carrier` = cl.`id_carrier`)
+		WHERE oc.`id_order` = '.(int)$id_order);
+
+    }
+
 }

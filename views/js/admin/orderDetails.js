@@ -9,8 +9,8 @@ $(document).ready(function (){
         lng: document.getElementById('dropoff_lng').value
     };
 
-    document.getElementById('active-tab').classList.add('tab-active');
-    document.getElementById('a-active').classList.add('tab-active');
+    document.getElementById('order-placed-main').classList.add('tab-active');
+    document.getElementById('order-placed-href').classList.add('tab-active');
 });
 
 function initMap() {

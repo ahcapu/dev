@@ -10,7 +10,7 @@
             <a href="{$returns}" class="returns-link">Returns</a>
         </div>
         <div class="frank-chart">
-            <a href="#"><i class="material-icons" id="settings">settings</i></a>
+            <a href="{$settings}"><i class="material-icons" id="settings">settings</i></a>
         </div>
         <div class="frank-settings">
             <a href="#"><i class="material-icons">assessment</i></a>
@@ -22,11 +22,11 @@
                 <p>Create a shipping</p>
             </div>
             <div class="col-sm-1">
-                <p>X</p>
+                <a href="{$shipping}">X</a>
             </div>
         </div>
         <br>
-        <form method="post">
+        <form method="post" class="new_shipment_form">
             <div class="row">
                 <div class="col-sm-4">
                     <label for="" style="color: #e07047; ">Order number</label>

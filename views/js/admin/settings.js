@@ -25,7 +25,7 @@ $(document).ready(function () {
         e.preventDefault();
         $form = $(this);
         $.ajax({
-            url: '../modules/frank/contactDetailAjax.php',
+            url: '../modules/frank/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
@@ -57,7 +57,7 @@ $(document).ready(function () {
         $form = $(this);
 
         $.ajax({
-            url: '../modules/frank/contactDetailAjax.php',
+            url: '../modules/frank/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
@@ -88,7 +88,7 @@ $(document).ready(function () {
         $form = $(this);
 
         $.ajax({
-            url: '../modules/frank/contactDetailAjax.php',
+            url: '../modules/frank/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
@@ -118,7 +118,7 @@ $(document).ready(function () {
         $form = $(this);
 
         $.ajax({
-            url: '../modules/frank/contactDetailAjax.php',
+            url: '../modules/frank/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
@@ -177,7 +177,7 @@ $(document).ready(function () {
         e.preventDefault();
         $form = $(this);
         $.ajax({
-            url: '../modules/frank/contactDetailAjax.php',
+            url: '../modules/frank/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
@@ -205,22 +205,45 @@ $(document).ready(function () {
 
     });
 
+    function loadWarehouseData(){
+        $.ajax({
+            url: '../modules/frank/showWarehouseAjax.php',
+            method: 'get',
+            success: function(response){
+                response = JSON.parse(response)
+                // console.log(response);
+                if (response.status === 'success') {
+                    $('.warehouse-table').html(response.html);
+                    deleteWarehouse();
+                }
+            }
+        });
+    }
+
+    function deleteWarehouse() {
+        $('.delete-warehouse').on('click', function (){
+            if (confirm('Are you sure you want to delete warehouse?')) {
+                let id = $(this).attr('data-id_warehouse');
+                // console.log(id);
+                $.ajax({
+                    async: false,
+                    url: '../modules/frank/deleteWarehouseAjax.php',
+                    method: 'POST',
+                    data: {warehouse_id: id},
+                    success: function (response) {
+                        console.log(response);
+                        loadWarehouseData();
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+    }
+
+
     loadWarehouseData();
 
-    // $('.delete-warehouse').on('click', function (){
-    //     // alert();
-    //     let id = $(this).attr('data-id_warehouse');
-    //     // console.log(id);
-    //     $.ajax({
-    //         async: false,
-    //         url: '../modules/frank/deleteWarehouseAjax.php',
-    //         method: 'POST',
-    //         data: {_id: id},
-    //         success: function (response) {
-    //             console.log(response);
-    //         }
-    //     });
-    // });
 
     $('#warehouse-address').keyup(function(){
         $('#myModal').modal('show');
@@ -241,7 +264,7 @@ $(document).ready(function () {
 
 // function crudRequest($form) {
 //     $.ajax({
-//         url: '../modules/frank/contactDetailAjax.php',
+//         url: '../modules/frank/postAjax.php',
 //         method: 'POST',
 //         data: $form.serialize(),
 //         success: function(response) {
@@ -250,41 +273,7 @@ $(document).ready(function () {
 //     });
 // }
 
-function loadWarehouseData(){
-    $.ajax({
-        url: '../modules/frank/showWarehouseAjax.php',
-        method: 'get',
-        success: function(response){
-            response = JSON.parse(response)
-            // console.log(response);
-            if (response.status === 'success') {
-                $('.warehouse-table').html(response.html);
-                deleteWarehouse();
-            }
-        }
-    });
-}
 
-function deleteWarehouse() {
-    $('.delete-warehouse').on('click', function (){
-        if (confirm('Are you sure you want to delete warehouse?')) {
-            let id = $(this).attr('data-id_warehouse');
-            // console.log(id);
-            $.ajax({
-                async: false,
-                url: '../modules/frank/deleteWarehouseAjax.php',
-                method: 'POST',
-                data: {_id: id},
-                success: function (response) {
-                    console.log(response);
-                    loadWarehouseData();
-                }
-            });
-        } else {
-            return false;
-        }
-    });
-}
 
 var addressArr = [];
 function initMap() {

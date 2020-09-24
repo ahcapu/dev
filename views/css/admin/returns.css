@@ -23,6 +23,7 @@ body {
 
 .frank .container-header > div {align-self: center}
 .frank .container-header > div > a {text-decoration: none; color: #e07047; }
+.frank .container-header > .frank-shipping > a { color: #9c9c9c; }
 .frank .container-header .frank-logo { font-size: 20px; font-weight: bold; }
 
 .frank .frank-shipping{font-weight: bold; }

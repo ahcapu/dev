@@ -60,27 +60,3 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, dropoff,
 }
 
 initMap();
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     let pickup = {
-//         lat: parseFloat(document.getElementById('pickup_lat').value),
-//         lng: parseFloat(document.getElementById('pickup_lng').value)
-//     };
-//     let dropoff = {
-//         lat: parseFloat(document.getElementById('dropoff_lat').value),
-//         lng: parseFloat(document.getElementById('dropoff_lng').value)
-//     };
-//     let s = document.createElement('script');
-//     document.head.appendChild(s);
-//     s.addEventListener('load', () => {
-//         // console.log(dropoff);
-//         console.log('Script has loaded');
-//         let map = new google.maps.Map(document.getElementById('map'),
-//             {
-//                 center: dropoff,
-//                 zoom: 16,
-//                 mapTypeId: google.maps.MapTypeId.ROADMAP
-//             });
-//     });
-//     s.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBXXUe1UPwcYKHx8L3drP_vJks8zl9kla4&libraries=places&callback=initMap'
-// });

@@ -39,7 +39,7 @@ $(document).ready(function () {
         // console.log(id);
         $.ajax({
             async: false,
-            url: '../modules/frank/pencil_ajax.php',
+            url: '../modules/frank/orderDetailsAjax.php',
             method: 'POST',
             data: {_id: id},
             success: function (response) {

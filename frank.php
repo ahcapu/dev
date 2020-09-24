@@ -156,6 +156,10 @@ class Frank extends CarrierModule
      */
     public function getContent()
     {
+        $countries = Country::getCountries($this->context->country);
+//        echo '<pre>'; print_r($countries); die();
+//        $countryName = Configuration::get('country_name');
+
         if (Tools::isSubmit('submitConfirmation')) {
             $params = array(
                 'mobile' => Tools::getValue('mobile'),
@@ -186,10 +190,13 @@ class Frank extends CarrierModule
 
 //                echo '<pre>'; print_r($res); die();
             }
-            $this->context->smarty->assign(array());
-
-//            echo '<pre>'; print_r($params); die();
         }
+        $this->context->smarty->assign(
+            array(
+                'countries' => $countries,
+//                'countryName' => $countryName
+            )
+        );
         return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
     }
 
@@ -266,7 +273,6 @@ class Frank extends CarrierModule
 
 //        return $data;
     }
-
 
     public function getOrderShippingCost($params, $shipping_cost)
     {
@@ -516,7 +522,7 @@ class Frank extends CarrierModule
                         'name' => $addressArray['firstname'] . ' ' . $addressArray['lastname'],
                         'number' => !empty($addressArray['phone']) ? $addressArray['phone'] : '',
                         'email' => $customer->email,
-                        'countryCode' => '92'
+                        'countryCode' => $this->countryCode(pSQL($addressArray['country'])),
                     ],
 
                 'deliveryType' => $carrierName[0]['carrier_name'],
@@ -529,6 +535,7 @@ class Frank extends CarrierModule
                 'storeOrderID' => $order->reference,
                 'store' => Configuration::get('FRANK_ID')
             ];
+//        echo '<pre>'; print_r($result); die();
         $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/addEcommerceOrder', $result, Configuration::get('FRANK_TOKEN'));
 
     }
@@ -608,6 +615,16 @@ class Frank extends CarrierModule
 			ON (oc.`id_carrier` = cl.`id_carrier`)
 		WHERE oc.`id_order` = '.(int)$id_order);
 
+    }
+
+    public function countryCode($countryName)
+    {
+        $countries = Country::getCountries($this->context->country);
+        foreach ($countries as $country) {
+            if ($country['name'] === $countryName) {
+                return $country['call_prefix'];
+            }
+        }
     }
 
 }

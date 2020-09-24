@@ -30,6 +30,23 @@
     // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
 $(document).ready(function () {
+    // console.log(document.getElementById('country').value);
+    $('#country').change(function (){
+        let country_name = document.getElementById('country').value
+        // console.log(countryName);
+        $.ajax({
+            async: false,
+            url: '../modules/frank/registrationAjax.php',
+            method: 'POST',
+            data: {countryName: country_name},
+            success: function (response) {
+                console.log(response);
+                document.getElementById('country-code').value = response;
+            }
+        });
+        // console.log(document.getElementById('country').value)
+    });
+
     $('.registration-form').on('submit', function (e){
         e.preventDefault();
         $form = $(this);
@@ -43,6 +60,7 @@ $(document).ready(function () {
                 if (response.status === 200) {
                     document.getElementById('p-body').classList.remove('active');
                     document.getElementById('confirmation').classList.add('active');
+
                     document.getElementById("mobile").value = document.getElementById('mobile-number').value;
 
                     document.getElementById('con-first-name').value = document.getElementById("first-name").value;
@@ -59,8 +77,23 @@ $(document).ready(function () {
                     document.getElementById('con-latitude').value = document.getElementById("latitude-id").value;
                     document.getElementById('con-longitude').value = document.getElementById("longitude-id").value;
 
+                    $(".registration-form")[0].reset();
+                    e.stopPropagation();
+                    return $.growl.notice({
+                        title: "",
+                        size: "large",
+                        message: "Store registered successfully!"
+                    });
+
                 } else if (response.status === 300) {
                     console.log(response.status);
+                    $(".registration-form")[0].reset();
+                    e.stopPropagation();
+                    return $.growl.notice({
+                        title: "",
+                        size: "large",
+                        message: "Store updated successfully!"
+                    });
                 } else {
                     console.log(response.status);
                 }

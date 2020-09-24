@@ -141,20 +141,20 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="first_name">First Name</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="first-name" placeholder="Enter first name" name="first_name">
+                        <input type="text" class="form-control" id="first-name" placeholder="Enter first name" name="first_name" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="last_name">Last Name</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="last-name" placeholder="Enter last name" name="last_name">
+                        <input type="text" class="form-control" id="last-name" placeholder="Enter last name" name="last_name" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="address_1">Address 1</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="address-1" placeholder="Enter address 1" name="address_1">
+                        <input type="text" class="form-control" id="address-1" placeholder="Enter address 1" name="address_1" required>
                     </div>
                 </div>
 
@@ -175,42 +175,49 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="city">City</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="city" placeholder="Enter city" name="city">
+                        <input type="text" class="form-control" id="city" placeholder="Enter city" name="city" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="postal_code">Postal code</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="postal-code" placeholder="Enter postal code" name="postal_code">
+                        <input type="text" class="form-control" id="postal-code" placeholder="Enter postal code" name="postal_code" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="country">Country</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="country" placeholder="Enter country" name="country">
+{*                        <input type="text" class="form-control" id="country" placeholder="Enter country" name="country" required>*}
+{*                        <input type="text" class="form-control" id="country" placeholder="Enter country" name="country">*}
+                        <select  class="form-control" id="country" name="country" required>
+                            <option>France</option>
+                            {foreach $countries as $country}
+                                <option>{$country['name']}</option>
+                            {/foreach}
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="country_code">Country code</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="country-code" placeholder="Enter country code" name="country_code">
+                        <input type="text" class="form-control" id="country-code" placeholder="Enter country code" name="country_code" required value="33">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="mobile_number">Mobile Number</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="mobile-number" placeholder="Enter mobile number" name="mobile_number">
+                        <input type="text" class="form-control" id="mobile-number" placeholder="Enter mobile number" name="mobile_number" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="number_of_stores">No. of store(s)</label>
                     <div class="col-sm-4">
-                        <input type="number" class="form-control" id="number-of-stores" placeholder="Enter No. of store(s)" name="number_of_stores">
+                        <input type="number" class="form-control" id="number-of-stores" placeholder="Enter No. of store(s)" name="number_of_stores" required>
                     </div>
                 </div>
 
@@ -232,14 +239,14 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="mobile">Mobile</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="mobile" placeholder="Mobile" name="mobile">
+                        <input type="text" class="form-control" id="mobile" placeholder="Mobile" name="mobile" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="smsCode">Code</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="sms-Code" placeholder="Code" name="smsCode">
+                        <input type="text" class="form-control" id="sms-Code" placeholder="Code" name="smsCode" required>
                     </div>
                 </div>
 

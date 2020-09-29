@@ -111,6 +111,9 @@
 </style>
 
 <script src="{$module_dir|escape:'html':'UTF-8'}views/js/back.js" type="text/javascript"></script>
+{if isset($confirmation)}
+    <div class="alert alert-success">{l s='Frank shipping module installed successfully' mod='frank'}</div>
+{/if}
 <div class="configuration">
     <div class="panel">
         <div class="panel-heading">
@@ -189,8 +192,6 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="country">Country</label>
                     <div class="col-sm-4">
-{*                        <input type="text" class="form-control" id="country" placeholder="Enter country" name="country" required>*}
-{*                        <input type="text" class="form-control" id="country" placeholder="Enter country" name="country">*}
                         <select  class="form-control" id="country" name="country" required>
                             <option>France</option>
                             {foreach $countries as $country}
@@ -298,8 +299,7 @@
                         </div>
                     </div>
                     <div id="pac-container">
-                        <input id="pac-input" type="text"
-                               placeholder="Enter a location">
+                        <input id="pac-input" type="text" placeholder="Enter a location">
                     </div>
                 </div>
                 <div id="map"></div>

@@ -34,54 +34,26 @@ body {
 .container-main-page { display: none; }
 .container-main-page-active { display: block; }
 
-.frank .mid-header {
-    margin-top: 30px;
+.input-search {
+    border-radius: 0 25px 25px 0!important;
+    width: 220px!important;
+    border: 2px solid #e07047!important;
+    border-left: unset!important;
 }
 
-.frank .mid-header .btn-search {
-    border-bottom-left-radius: 25px;
-    border-top-left-radius: 25px;
-    height: 31px;
-    border-right: none;
-    border-bottom: 2px solid #e07047;
-    border-left: 2px solid #e07047;
-    border-top: 2px solid #e07047;
-    background-color: whitesmoke;
-}
+.input-search::placeholder {color: #e07047!important; opacity: 1; padding-left: 15px }
 
-.frank .mid-header .input-search {
-    border-bottom-right-radius: 25px;
-    border-top-right-radius: 25px;
-    width: 220px;
-    border-left: none;
-    border-bottom: 2px solid #e07047;
-    border-right: 2px solid #e07047;
-    border-top: 2px solid #e07047;
-    color: #e07047;
-}
-
-.frank .mid-header .input-search::placeholder {color: #e07047; opacity: 1; padding-left: 15px }
-
-.frank .mid-header .btn-new-shipment {
-    /*display: inline-block;*/
-    border-radius: 25px;
-    border: 2px solid #e07047;
+.btn-new-shipment {
+    color: #e07047!important;
+    background-color: white;
+    border-radius: 25px!important;
     width: 170px;
     height: 45px;
-    color: #e07047;
-    font-weight: bold;
-    font-size: 14px;
+    padding-top: 14px!important;
+    border: 2px solid #e07047!important;
 }
 
-.frank .mid-header .upload-file {
-    text-decoration: none;
-    color: #e07047;
-    font-weight: bold;
-    font-size: 14px;
-    padding-right: 5px;
-}
-
-.frank .tabs-container {
+.tabs-container {
     height: auto;
     margin-top: 30px;
 }

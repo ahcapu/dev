@@ -1,29 +1,30 @@
 <div class="frank">
     <div class="container-header">
-        <div class="column-1">
-            <a href="#" style="text-decoration: none; "><h1 style="color: #e07047; float: left; padding-left: 30px;">Frank</h1></a>
+        <div class="frank-logo">
+            <a href="#">Frank</a>
         </div>
-        <div class="column-2">
+        <div class="frank-shipping">
             <a href="{$shipping}" class="shipping-link">Shipping</a>
         </div>
-        <div class="column-3">
+        <div class="frank-returns">
             <a href="{$returns}" class="returns-link">Returns</a>
         </div>
-        <div class="column-4">
-            <a href="#"><i class="material-icons" id="settings" style="float: right; margin-right: 30px; margin-top: 27px; color: #e07047">settings</i></a>
+        <div class="frank-chart">
+            <a href="{$settings}"><i class="material-icons" id="settings">settings</i></a>
         </div>
-        <div class="column-5">
-            <a href="#"><i class="material-icons" style="float: right; margin-right: 20px; margin-top: 27px; color: #e07047">assessment</i></a>
+        <div class="frank-settings">
+            <a href="#"><i class="material-icons">assessment</i></a>
         </div>
     </div>
 
-    <div class="tab-mid-container">
-        <a href="#" class="upload-file upload">Upload file</a>
-        <a href="#" class="upload-icon upload"><i class="material-icons">system_update_alt</i></a>
-        <button class="btn-new-shipment"><i class="material-icons" style="font-size: 14px; font-weight: bold;">add</i> New shipment</button>
-    </div>
+{*    <div class="tab-mid-container">*}
+{*        <a href="#" class="upload-file upload">Upload file</a>*}
+{*        <a href="#" class="upload-icon upload"><i class="material-icons">system_update_alt</i></a>*}
+{*        <button class="btn-new-shipment"><i class="material-icons" style="font-size: 14px; font-weight: bold;">add</i> New shipment</button>*}
+{*    </div>*}
     <div class="detail-container">
         <div class="status-tab">
+            <input id="order-status" type="hidden" value="{$get_order_by_id['status']}">
             <div id="order-placed-main" class="order-placed">
                 1 <a href="#" id="order-placed-href">Order placed</a>
                 <p>{$get_order_by_id['createdAt']|date_format:"%m/%m/%Y"}</p>

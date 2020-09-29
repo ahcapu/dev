@@ -189,12 +189,12 @@ class Frank extends CarrierModule
                 Configuration::updateValue('FRANK_ID', $res['data']['_id']);
 
 //                echo '<pre>'; print_r($res); die();
+                $this->context->smarty->assign('confirmation', 'ok');
             }
         }
         $this->context->smarty->assign(
             array(
                 'countries' => $countries,
-//                'countryName' => $countryName
             )
         );
         return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');

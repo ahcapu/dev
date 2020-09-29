@@ -32,6 +32,7 @@ class AdminFrankOrderDetailsController extends ModuleAdminController
 
         $returns = $this->get_ahref('AdminFrankReturns');
         $shipping = $this->get_ahref('AdminFrankShipping');
+        $settings = $this->get_ahref('AdminFrankSettings');
 
         $get_order_by_id = json_decode($this->frank_api->getRequests($baseUrl . $orderId, Configuration::get('FRANK_TOKEN')), true);
 
@@ -42,7 +43,8 @@ class AdminFrankOrderDetailsController extends ModuleAdminController
             array(
                 'get_order_by_id' => $get_order_by_id['data'],
                 'returns' => $returns,
-                'shipping' => $shipping
+                'shipping' => $shipping,
+                'settings' => $settings
             )
         );
 
@@ -54,7 +56,10 @@ class AdminFrankOrderDetailsController extends ModuleAdminController
     public function setMedia($isNewTheme = false)
     {
         $this->addJquery();
+        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/bootstrap.css');
+        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/all.css');
         $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/orderDetails.css');
+        $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/all.js');
         $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/orderDetails.js');
         parent::setMedia();
     }

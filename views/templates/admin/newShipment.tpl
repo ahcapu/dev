@@ -21,25 +21,29 @@
             <div class="col-sm-11">
                 <p>Create a shipping</p>
             </div>
-            <div class="col-sm-1">
-                <a href="{$shipping}">X</a>
+            <div class="col-sm-1 text-lg-right">
+                <a href="{$shipping}" style="color: #e07047; font-size: 24px">X</a>
             </div>
         </div>
         <br>
         <form method="post" class="new_shipment_form">
-            <div class="row">
-                <div class="col-sm-4">
-                    <label for="" style="color: #e07047; ">Order number</label>
-                    <input type="text" name="orderNumber">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label for="" style="color: #e07047; ">Order number</label>
+                        <input type="text" name="orderNumber">
+                    </div>
                 </div>
             </div>
-            <br>
-            <div class="row">
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
                     <p>Item information</p>
                 </div>
             </div>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
                     <label for="" style="color: #9d9d9d;">Item name</label>
                     <input type="text" name="item_name">
@@ -49,68 +53,81 @@
                     <input type="text" name="quantity">
                 </div>
             </div>
-            <br>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
-                   <p>Package dimension</p>
+                    <p>Package dimension</p>
                 </div>
             </div>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-3 ">
                     <label for="" style="color: #9d9d9d;">Width</label>
-                    <div class="input-container">
-                        <input style="border-radius: 9px 0 0 9px!important;" class="input-field" type="text" name="width">
-                        <i class="icon">cm</i>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="width" style="border-radius: 12px 0 0 12px!important;">
+                        <span class="input-group-addon" style="border-radius: 0 12px 12px 0!important;">cm</span>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <label for="" style="color: #9d9d9d;">Height</label>
-                    <div class="input-container">
-                        <input style="border-radius: 9px 0 0 9px!important;" class="input-field" type="text" name="height">
-                        <i class="icon">cm</i>
+
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="height" style="border-radius: 12px 0 0 12px!important;">
+                        <span class="input-group-addon" style="border-radius: 0 12px 12px 0!important;">cm</span>
                     </div>
+
                 </div>
                 <div class="col-sm-3">
                     <label for="" style="color: #9d9d9d;">Depth</label>
-                    <div class="input-container">
-                        <input style="border-radius: 9px 0 0 9px!important;" class="input-field" type="text" name="depth">
-                        <i class="icon">cm</i>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="depth" style="border-radius: 12px 0 0 12px!important;">
+                        <span class="input-group-addon" style="border-radius: 0 12px 12px 0!important;">cm</span>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <label for="" style="color: #9d9d9d;">Weight</label>
-                    <div class="input-container">
-                        <input style="border-radius: 9px 0 0 9px!important;" class="input-field" type="text" name="weight">
-                        <i class="icon">kg</i>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="weight" style="border-radius: 12px 0 0 12px!important;">
+                        <span class="input-group-addon" style="border-radius: 0 12px 12px 0!important;">kg</span>
                     </div>
                 </div>
             </div>
-            <br>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
                     <p>Return information</p>
                 </div>
             </div>
-
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
                     <input type="checkbox" name="active" value="1" id="return-checkbox">
                     <label for="" style="color: #9d9d9d;">Can return</label>
                 </div>
             </div>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
                     <input type="number" id="can-return-input" name="can_return_input" style="height: 32px; display: none; ">
                 </div>
             </div>
-            <br>
-            <div class="row">
+            </div>
+
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
                     <p>Contact information</p>
                 </div>
             </div>
+            </div>
 
-            <div class="row">
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
                     <label for="" style="color: #9d9d9d;">Full name</label>
                     <input type="text" name="full_name">
@@ -124,20 +141,24 @@
                     <input type="text" name="email_address">
                 </div>
             </div>
-            <br>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
-                    <label for="">Pickup date</label>
+                    <label for="" style="color: #9d9d9d; ">Pickup date</label>
                     <input type="date" name="pickup_date" style="width: 200px;">
                 </div>
             </div>
-            <br>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
                     <p>Delivery method</p>
                 </div>
             </div>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-2">
                     <input type="radio" name="delivery_type" id="flex" value="flex">
                     <label style="color: #9d9d9d;" for="">Flex</label>
@@ -151,8 +172,9 @@
                     <label for="" style="color: #9d9d9d;">Green</label>
                 </div>
             </div>
-            <br>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-4">
                     <label for="" style="color: #9d9d9d;">Dropoff address</label>
                     <input type="text" name="dropoff_address" id="dropoff-address">
@@ -165,8 +187,9 @@
                     <input type="hidden" name="new-shipment-zip" id="new-shipment-zip">
                 </div>
             </div>
-            <br>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-6">
                     <label style="color: #e07047; for="">Dropoff address</label>
                     <select name="pickup_address" style="border-radius: 9px;">
@@ -184,12 +207,14 @@
                     </select>
                 </div>
             </div>
-            <br>
-            <div class="row">
+            </div>
+            <div class="form-group">
+                <div class="row">
                 <div class="col-sm-8"></div>
                 <div class="col-sm-4">
                     <button type="submit" class="create-new-shipment-btn" name="create_new_shipping">Create</button>
                 </div>
+            </div>
             </div>
         </form>
     </div>

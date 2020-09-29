@@ -257,7 +257,7 @@ $(document).ready(function () {
         $('#warehouse-state').val(addressArr[4]);
         $('#warehouse-country').val(addressArr[5]);
         $('#warehouse-zip').val(addressArr[6]);
-        // console.log(addressArr);
+        console.log(addressArr);
     });
 
 });

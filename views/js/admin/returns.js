@@ -52,6 +52,32 @@ $(document).ready(function () {
 
     });
 
+    // Searching -------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    $("#txt-search").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#search-pending tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+    $("#txt-search").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#search-shipped tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+    $("#txt-search").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#search-cancelled tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+    // Searching End ........................................................................................................................................................
+
+
     $('.upload').on('click', function (){
         document.getElementById('main-page-id').classList.remove('container-main-page-active');
         document.getElementById('upload-page-id').classList.add('container-upload-page-active');

@@ -37,8 +37,11 @@ body { background-color: #dee2e8; }
 }
 
 
-.ctr input { border-radius: 9px!important; background-color: white!important; border: 1px solid #d0d0d0!important; }
+.ctr input { border-radius: 12px 12px 12px 12px!important; background-color: white!important; border: 1px solid #d0d0d0!important; }
 p { color: #e07047; font-weight: bold; }
+
+.ctr label { font-size: 14px!important; }
+.ctr a { text-decoration: none!important; }
 .create-new-shipment-btn {
     width: 200px; height: 40px; border-radius: 25px!important; border: 2px solid #e07047!important; background-color: white; color: #e07047; font-weight: bold;
 }

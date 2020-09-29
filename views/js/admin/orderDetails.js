@@ -8,9 +8,22 @@ $(document).ready(function (){
         lat: document.getElementById('dropoff_lat').value,
         lng: document.getElementById('dropoff_lng').value
     };
+    let order_status = document.getElementById('order-status').value;
 
-    document.getElementById('order-placed-main').classList.add('tab-active');
-    document.getElementById('order-placed-href').classList.add('tab-active');
+    if (order_status === 'pending') {
+        document.getElementById('order-placed-main').classList.add('tab-active');
+        document.getElementById('order-placed-href').classList.add('tab-active');
+    } else if (order_status === 'onmyway' || order_status === 'accepted') {
+        document.getElementById('sent-with-main').classList.add('tab-active');
+        document.getElementById('sent-with-href').classList.add('tab-active');
+    } else if (order_status === 'picked') {
+        document.getElementById('delivery-in-progress-main').classList.add('tab-active');
+        document.getElementById('delivery-in-progress-href').classList.add('tab-active');
+    } else if (order_status === 'delivered') {
+        document.getElementById('delivered-main').classList.add('tab-active');
+        document.getElementById('delivered-href').classList.add('tab-active');
+    }
+
 });
 
 function initMap() {

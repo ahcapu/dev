@@ -30,6 +30,21 @@
     // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
 $(document).ready(function () {
+
+    $('#address-1').keyup(function(){
+        $('#myModal').modal('show');
+        // alert(123);
+    });
+    $('#dismiss-button').on('click', function (){
+        let address = addressArr[1] ? addressArr[0] + ' '+ addressArr[1] : addressArr[0];
+        $('#address-1').val(address);
+        $('#city').val(addressArr[2]);
+        $('#FRANK_STORE_STATE').val(addressArr[4]);
+        $('#country').val(addressArr[5]);
+        $('#postal-code').val(addressArr[6]);
+        console.log(addressArr);
+    });
+
     // console.log(document.getElementById('country').value);
     $('#country').change(function (){
         let country_name = document.getElementById('country').value
@@ -77,13 +92,13 @@ $(document).ready(function () {
                     document.getElementById('con-latitude').value = document.getElementById("latitude-id").value;
                     document.getElementById('con-longitude').value = document.getElementById("longitude-id").value;
 
-                    $(".registration-form")[0].reset();
-                    e.stopPropagation();
-                    return $.growl.notice({
-                        title: "",
-                        size: "large",
-                        message: "Store registered successfully!"
-                    });
+                    // $(".registration-form")[0].reset();
+                    // e.stopPropagation();
+                    // return $.growl.notice({
+                    //     title: "",
+                    //     size: "large",
+                    //     message: "Store registered successfully!"
+                    // });
 
                 } else if (response.status === 300) {
                     console.log(response.status);
@@ -145,7 +160,7 @@ function initMap() {
         autocomplete.addListener('place_changed', function() {
           infowindow.close();
           marker.setVisible(false);
-          var place = autocomplete.getPlace();
+          let place = autocomplete.getPlace();
           if (!place.geometry) {
             // User entered the name of a Place that was not suggested and
             // pressed the Enter key, or the Place Details request failed.
@@ -195,40 +210,16 @@ function initMap() {
          // console.log(map)
           infowindow.open(map, marker);
         });
-
-        // Sets a listener on a radio button to change the filter type on Places
-        // Autocomplete.
         function setupClickListener(id, types) {
           var radioButton = document.getElementById(id);
           radioButton.addEventListener('click', function() {
             autocomplete.setTypes(types);
           });
         }
-
         setupClickListener('changetype-all', []);
-        // setupClickListener('changetype-address', ['address']);
-        // setupClickListener('changetype-establishment', ['establishment']);
-        // setupClickListener('changetype-geocode', ['geocode']);
-
         document.getElementById('use-strict-bounds')
             .addEventListener('click', function() {
               console.log('Checkbox clicked! New state=' + this.checked);
               autocomplete.setOptions({strictBounds: this.checked});
             });
       }
-$(document).ready(function(){
-  $('#address-1').keyup(function(){
-    $('#myModal').modal('show');
-    // alert(123);
-  }) 
-  $('#dismiss-button').click(function(){
-    // var address =  $('#pac-input').val();
-    var address = addressArr[1] ? addressArr[0] + ' '+ addressArr[1] : addressArr[0]; 
-    $('#address-1').val(address);
-    $('#city').val(addressArr[2]);
-    $('#FRANK_STORE_STATE').val(addressArr[4]);
-    $('#country').val(addressArr[5]);
-    $('#postal-code').val(addressArr[6]);
-  // console.log(addressArr);  
-  });
-});

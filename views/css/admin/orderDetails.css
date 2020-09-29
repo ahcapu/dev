@@ -1,39 +1,39 @@
 
-.bootstrap .page-head { display: none }
+
+.nobootstrap { min-width: unset; padding: unset;}
+.bootstrap .page-head>.wrapper { display: none; }
+.bootstrap .page-head {height: 10px;}
+body {
+    background-color: #dee2e8;
+}
+
+.bootstrap .row {padding-left: 15px;}
+.frank {
+    height: auto;
+}
 
 
-.bootstrap .frank .container-header {
-    margin-top: -114px;
-    display: grid;
-    grid-template-columns: 1fr 0.5fr 1fr 2fr 0.1fr;
-    background-color: white;
+.frank .container-header {
+    margin-top: -105px;
+    width: 100%;
     height: 100px;
-    padding-top: 10px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 2fr 0.5fr 4fr 0.3fr 0.3fr;
+    background-color: white;
 }
 
-.bootstrap .frank .container-header .column-2 { padding-top: 27px; }
-.bootstrap .frank .container-header .column-3 { padding-top: 27px; }
+.frank .container-header > div {align-self: center}
+.frank .container-header > div > a {text-decoration: none; color: #e07047; }
+.frank .container-header > .frank-shipping > a { color: #9c9c9c; }
+.frank .container-header .frank-logo { font-size: 20px; font-weight: bold; }
 
-.bootstrap .frank .container-header .shipping-link {
-    text-decoration: none;
-    color: #a7a7a7!important;
-    font-size: 15px
-}
+.frank .frank-shipping{font-weight: bold; }
+.frank .frank-returns{font-weight: bold; }
+.frank .frank-chart{justify-self: center; }
+.frank .frank-settings{justify-self: center; }
 
-.bootstrap .frank .container-header .returns-link {
-    text-decoration: none;
-    color: #a7a7a7!important;
-    font-size: 15px;
-}
 
-.bootstrap .container-header .shipping-link:hover {color: #e07047 !important;}
-.bootstrap .container-header .returns-link:hover {color: #e07047 !important;}
-
-#material-icon {
-    font-size: 20px!important;
-    padding: 4px;
-    color: #e07047;
-}
 
 .tab-mid-container{
     margin-top: 20px;
@@ -51,22 +51,22 @@
     font-size: 14px;
 }
 
-.tab-mid-container .upload-file {
-    text-decoration: none!important;
-    float: right;
-    margin-top: 15px;
-    margin-right: 30px;
-    margin-left: 10px;
-    color: #e07047!important;
-    font-weight: bold;
-}
+/*.tab-mid-container .upload-file {*/
+/*    text-decoration: none!important;*/
+/*    float: right;*/
+/*    margin-top: 15px;*/
+/*    margin-right: 30px;*/
+/*    margin-left: 10px;*/
+/*    color: #e07047!important;*/
+/*    font-weight: bold;*/
+/*}*/
 
-.tab-mid-container .upload-icon {
-    float: right;
-    margin-top: 12px;
-    margin-left: 30px;
-    color: #e07047!important;
-}
+/*.tab-mid-container .upload-icon {*/
+/*    float: right;*/
+/*    margin-top: 12px;*/
+/*    margin-left: 30px;*/
+/*    color: #e07047!important;*/
+/*}*/
 
 .detail-container {
     padding-top: 10px;

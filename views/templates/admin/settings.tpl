@@ -16,7 +16,7 @@
             <a href="#"><i class="material-icons">assessment</i></a>
         </div>
     </div>
-{*    Account*}
+    {*    Account*}
     <div id="ctr-1-account" class="container-fluid ctr-1 ctr-active">
         <div class="row row-settings">
             <div class="col"></div>
@@ -83,12 +83,12 @@
                     <form method="post" class="resend-verification-form">
                         <div class="row">
                             <div class="col-sm-3">
-                                 <input type="text" name="verification_email" value="{$api_email_address['email']}" disabled style="border: unset; background-color: white;">
-{*                                <p style="color: #b1b1b1;" id="verification-email" name="verification_email">{$api_email_address['email']}</p>*}
+                                <input type="text" name="verification_email" value="{$api_email_address['email']}" disabled style="border: unset; background-color: white;">
+                                {*                                <p style="color: #b1b1b1;" id="verification-email" name="verification_email">{$api_email_address['email']}</p>*}
                             </div>
                             <div class="col-sm-2">
-{*                                <p style="color: #b1b1b1;" id="verification-role" name="verification_role">{$api_email_address['role']}</p>*}
-                                 <input type="text" name="verification_role" value="{$api_email_address['role']}" disabled style="border: unset; background-color: white;">
+                                {*                                <p style="color: #b1b1b1;" id="verification-role" name="verification_role">{$api_email_address['role']}</p>*}
+                                <input type="text" name="verification_role" value="{$api_email_address['role']}" disabled style="border: unset; background-color: white;">
                             </div>
                             <div class="col-sm-2">
                                 <input type="text" name="verification_role" value="" disabled style="border: unset; background-color: white;">
@@ -124,7 +124,7 @@
                         </div>
                         <div class="col-sm-2">
                             <button type="submit" class="email-address-add" name="update_email_address">Add</button>
-{*                            <input type="button" value="Add" class="email-address-add">*}
+                            {*                            <input type="button" value="Add" class="email-address-add">*}
                         </div>
                     </div>
                 </form>
@@ -159,7 +159,7 @@
                         <div class="col-sm-3">
                             <input type="password" name="confirm_password">
                         </div>
-{*                        <div class="col-sm-3"><input type="button" value="Save" class="change-password-save"></div>*}
+                        {*                        <div class="col-sm-3"><input type="button" value="Save" class="change-password-save"></div>*}
                         <button type="submit" name="change_password" class="change-password-save">Save</button>
                     </div>
                 </form>
@@ -192,7 +192,7 @@
                     </div>
                     <form method="post" class="delete-account-form">
                         <div class="col-sm-4">
-{*                            <input type="button" value="Delete account" class="delete-account-btn">*}
+                            {*                            <input type="button" value="Delete account" class="delete-account-btn">*}
                             <input type="hidden" name="_id">
                             <button type="submit" name="btn_delete_account" class="delete-account-btn">Delete account</button>
                         </div>
@@ -205,7 +205,7 @@
         </div>
     </div>
 
-{*    Invoice*}
+    {*    Invoice*}
     <div id="ctr-2-invoice" class="container-fluid ctr-2 ctr-active">
         <div class="row row-settings">
             <div class="col"></div>
@@ -279,7 +279,7 @@
         </div>
     </div>
 
-{*    Warehouse*}
+    {*    Warehouse*}
     <div id="ctr-3-warehouse" class="container-fluid ctr-3 ctr-active">
         <div class="row row-settings">
             <div class="col"></div>
@@ -331,16 +331,7 @@
                 <br>
                 <div class="row">
                     <table class="table warehouse-table">
-{*                        <tbody>*}
-{*                        {foreach $api_warehouses as $api_warehouse}*}
-{*                            <tr>*}
-{*                                <td scope="col" style="width: 165px;">{$api_warehouse['name']}</td>*}
-{*                                <td scope="col" style="padding-left: 60px; width: 250px; ">{$api_warehouse['address']}</td>*}
-{*                                <td scope="col" style="padding-left: 100px;"><a style="text-decoration: none" href="#"><i class="material-icons" style="font-size: 15px; color: grey;">create</i></a></td>*}
-{*                                <td scope="col" style="padding-left: 20px;"><a href="#" class="delete-warehouse" data-id_warehouse="{$api_warehouse['_id']}"><i class="material-icons" style="font-size: 15px; color: grey;">delete</i></a></td>*}
-{*                            </tr>*}
-{*                        {/foreach}*}
-{*                        </tbody>*}
+{*                        Warehouse contents in ajax*}
                     </table>
                 </div>
             </div>

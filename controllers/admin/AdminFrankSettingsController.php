@@ -49,8 +49,10 @@ class AdminFrankSettingsController extends ModuleAdminController
     public function setMedia($isNewTheme = false)
     {
         $this->addJquery();
-//        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/bootstrap.css');
+        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/bootstrap.css');
+        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/all.css');
         $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/settings.css');
+        $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/all.js');
         $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/settings.js');
         parent::setMedia();
     }

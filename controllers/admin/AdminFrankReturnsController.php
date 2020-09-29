@@ -29,7 +29,7 @@ class AdminFrankReturnsController extends ModuleAdminController
     {
         $baseUrl = 'https://p-post.herokuapp.com/api/v1/orders/store/';
         $storeId = Configuration::get('FRANK_ID');
-        $endPoint = '/all';
+        $endPoint = '/returns';
         $api_franks = json_decode($this->frank_api->getRequests($baseUrl . $storeId . $endPoint, Configuration::get('FRANK_TOKEN')), true);
 
         $shipping = $this->get_ahref('AdminFrankShipping');
@@ -66,7 +66,10 @@ class AdminFrankReturnsController extends ModuleAdminController
     public function setMedia($isNewTheme = false)
     {
         $this->addJquery();
+        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/bootstrap.css');
+        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/all.css');
         $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/returns.css');
+        $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/all.js');
         $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/returns.js');
         parent::setMedia();
     }

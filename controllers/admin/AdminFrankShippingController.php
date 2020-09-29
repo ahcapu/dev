@@ -68,7 +68,10 @@ class AdminFrankShippingController extends ModuleAdminController
     public function setMedia($isNewTheme = false)
     {
         $this->addJquery();
+        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/bootstrap.css');
+        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/all.css');
         $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/shipping.css');
+        $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/all.js');
         $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/shipping.js');
         parent::setMedia();
     }

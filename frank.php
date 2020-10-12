@@ -277,84 +277,86 @@ class Frank extends CarrierModule
     public function getOrderShippingCost($params, $shipping_cost)
     {
         $res = null;
-        if (Context::getContext()->customer->logged == true && !empty($params->id_carrier))
-        {
-            $id_address_delivery = Context::getContext()->cart->id_address_delivery;
-            $address = new Address($id_address_delivery);
-            $addressArray = (array) $address;
-            
-            $carrierName = $this->getCarrier($params->id_carrier);
-            $carrierName = $carrierName[0]['name'];
+//        if (Context::getContext()->customer->logged == true && !empty($params->id_carrier))
+//        {
+//
+//        }
+        $id_address_delivery = Context::getContext()->cart->id_address_delivery;
+        $address = new Address($id_address_delivery);
+        $addressArray = (array) $address;
 
-            $prodArr = $params->getProducts();
+        $carrierName = $this->getCarrier($params->id_carrier);
+        $carrierName = $carrierName[0]['name'];
 
-            $prodDetail = [];
-            $totalWeight = 0;
-            $totalLength = 0;
-            $totalWidth = 0;
-            $totalHeight = 0;
+        $prodArr = $params->getProducts();
 
-            for ($i=0; $i < count($prodArr); $i++) { 
-                
-                $totalWeight += $prodArr[$i]['weight'];
-                $totalLength += $prodArr[$i]['depth'];
-                $totalWidth += $prodArr[$i]['width'];
-                $totalHeight += $prodArr[$i]['height'];
+        $prodDetail = [];
+        $totalWeight = 0;
+        $totalLength = 0;
+        $totalWidth = 0;
+        $totalHeight = 0;
+
+        for ($i=0; $i < count($prodArr); $i++) {
+
+            $totalWeight += $prodArr[$i]['weight'];
+            $totalLength += $prodArr[$i]['depth'];
+            $totalWidth += $prodArr[$i]['width'];
+            $totalHeight += $prodArr[$i]['height'];
 
 
-                $prodDetail[$i]['product_name'] = $prodArr[$i]['name'];
-                $prodDetail[$i]['id_product'] = $prodArr[$i]['id_product'];
-                $prodDetail[$i]['product_quantity'] = $prodArr[$i]['cart_quantity'];
-                $prodDetail[$i]['width'] = $prodArr[$i]['width'];
-                $prodDetail[$i]['height'] = $prodArr[$i]['height'];
-                $prodDetail[$i]['length'] = $prodArr[$i]['depth'];
-                $prodDetail[$i]['weight'] = $prodArr[$i]['weight'];
+            $prodDetail[$i]['product_name'] = $prodArr[$i]['name'];
+            $prodDetail[$i]['id_product'] = $prodArr[$i]['id_product'];
+            $prodDetail[$i]['product_quantity'] = $prodArr[$i]['cart_quantity'];
+            $prodDetail[$i]['width'] = $prodArr[$i]['width'];
+            $prodDetail[$i]['height'] = $prodArr[$i]['height'];
+            $prodDetail[$i]['length'] = $prodArr[$i]['depth'];
+            $prodDetail[$i]['weight'] = $prodArr[$i]['weight'];
 
-            }
-            
-            /**
-             * Send the details through the API
-             * Return the price sent by the API
-             */
+        }
 
-            $addArr = explode(',', $addressArray['address2']);
+        /**
+         * Send the details through the API
+         * Return the price sent by the API
+         */
 
-            $result =
-                [
-                    'type' => 'delivery',
-                    'pickup' =>
-                        [
-                            'address' => Configuration::get('FRANK_ADDRESS_1'),
-                            'location' =>
-                                [
-                                    (float)Configuration::get('FRANK_LONGITUDE'),
-                                    (float)Configuration::get('FRANK_LATITUDE')
-                                ],
-                            'shortAddress' => Configuration::get('FRANK_ADDRESS_1'),
-                            'city' => Configuration::get('FRANK_STORE_CITY'),
-                            'country' => Configuration::get('FRANK_STORE_COUNTRY')
-                        ],
-                    'dropoff' =>
-                        [
-                            'address' => pSQL($addressArray['address1']),
-                            'location' =>
-                               [
-                                    (float) $addArr[1],
-                                    (float) $addArr[0]
-                               ],
-                            'shortAddress' => pSQL($addressArray['address1']),
-                            'city' => pSQL($addressArray['city']),
-                            'country' => pSQL($addressArray['country'])
-                        ],
-                    'commodities' => $prodDetail,
+        $addArr = explode(',', $addressArray['address2']);
 
-                    'contact' =>
-                        [
-                            'name' => $addressArray['firstname'] . ' ' . $addressArray['lastname'],
-                            'number' => !empty($addressArray['phone']) ? $addressArray['phone'] : '',
-                            'email' => $addressArray['email'],
-                            'countryCode' => '92'
-                        ],
+        $result =
+            [
+                'type' => 'delivery',
+                'pickup' =>
+                    [
+                        'address' => Configuration::get('FRANK_ADDRESS_1'),
+                        'location' =>
+                            [
+                                (float)Configuration::get('FRANK_LONGITUDE'),
+                                (float)Configuration::get('FRANK_LATITUDE')
+                            ],
+                        'shortAddress' => Configuration::get('FRANK_ADDRESS_1'),
+                        'city' => Configuration::get('FRANK_STORE_CITY'),
+                        'country' => Configuration::get('FRANK_STORE_COUNTRY')
+                    ],
+                'dropoff' =>
+                    [
+                        'address' => pSQL($addressArray['address1']),
+                        'location' =>
+                            [
+                                (float) $addArr[1],
+                                (float) $addArr[0]
+                            ],
+                        'shortAddress' => pSQL($addressArray['address1']),
+                        'city' => pSQL($addressArray['city']),
+                        'country' => pSQL($addressArray['country'])
+                    ],
+                'commodities' => $prodDetail,
+
+                'contact' =>
+                    [
+                        'name' => $addressArray['firstname'] . ' ' . $addressArray['lastname'],
+                        'number' => !empty($addressArray['phone']) ? $addressArray['phone'] : '',
+                        'email' => $addressArray['email'],
+                        'countryCode' => '92'
+                    ],
 
                 'deliveryType' => $carrierName,
                 'totalWeight' => sprintf("%.2f",$totalWeight),
@@ -366,11 +368,10 @@ class Frank extends CarrierModule
                 'store' => Configuration::get('FRANK_ID')
             ];
 
-            $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/rates', $result, Configuration::get('FRANK_TOKEN'));
-            $res = json_decode($res, true);
-            return $res['data']['rates']['price'];
-        }
-        return $shipping_cost;
+        $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/rates', $result, Configuration::get('FRANK_TOKEN'));
+        $res = json_decode($res, true);
+        return ($res['data']['rates']['price']) + $shipping_cost;
+//        return $shipping_cost;
     }
 
     public function getOrderShippingCostExternal($params)

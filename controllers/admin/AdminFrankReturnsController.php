@@ -29,7 +29,7 @@ class AdminFrankReturnsController extends ModuleAdminController
     {
         $baseUrl = 'https://p-post.herokuapp.com/api/v1/orders/store/';
         $storeId = Configuration::get('FRANK_ID');
-        $endPoint = '/returns';
+        $endPoint = '/all/return';
         $api_franks = json_decode($this->frank_api->getRequests($baseUrl . $storeId . $endPoint, Configuration::get('FRANK_TOKEN')), true);
 
         $shipping = $this->get_ahref('AdminFrankShipping');
@@ -76,7 +76,8 @@ class AdminFrankReturnsController extends ModuleAdminController
 
     private function get_ahref($controller){
         $stat = _PS_ADMIN_DIR_;
-        $admin_folder = substr(strrchr($stat, "admin "), 0);
+//        $admin_folder = substr(strrchr($stat, "admin "), 0);
+        $admin_folder = substr($stat, strpos($stat, "admin"));
         $token = Tools::getAdminTokenLite($controller);
         return _PS_BASE_URL_.__PS_BASE_URI__.$admin_folder.'/index.php?controller='.$controller.'&token='.$token;
     }

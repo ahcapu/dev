@@ -42,13 +42,13 @@ function initMap() {
         markerA = new google.maps.Marker({
             position: dropoff,
             title: "point A",
-            label: "A",
+            label: "Dropoff",
             map: map
         }),
         markerB = new google.maps.Marker({
             position: pickup,
             title: "point B",
-            label: "B",
+            label: "Pickup",
             map: map
         });
 

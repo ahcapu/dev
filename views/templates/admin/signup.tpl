@@ -111,9 +111,27 @@
 </style>
 
 <script src="{$module_dir|escape:'html':'UTF-8'}views/js/back.js" type="text/javascript"></script>
+
 {if isset($confirmation)}
     <div class="alert alert-success">{l s='Frank shipping module installed successfully' mod='frank'}</div>
 {/if}
+
+{if isset($error_message_password)}
+    <div class="alert alert-danger">{l s='Password not matching' mod='frank'}</div>
+{/if}
+
+{if isset($error_message_credentials)}
+    <div class="alert alert-danger">{l s='Credentials are missing' mod='frank'}</div>
+{/if}
+
+{if isset($api_error)}
+    <div class="alert alert-danger">{l s='Something went wrong' mod='frank'}</div>
+{/if}
+
+{if isset($already_registered)}
+    <div class="alert alert-info">{l s='You are already registered!' mod='frank'}</div>
+{/if}
+
 <div class="configuration">
     <div class="panel">
         <div class="panel-heading">
@@ -138,26 +156,50 @@
         <div class="panel-heading">
             <i class="icon icon-cogs"></i> {l s='Settings' mod='frank'}
         </div>
-{*        Main form----------------------------------------------------------------------------------------------------------------------------*}
+        {*        Main form----------------------------------------------------------------------------------------------------------------------------*}
         <div id="p-body" class="panel-body p-body active">
-            <form class="form-horizontal registration-form" method="post">
+            <form class="form-horizontal registration-form" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="first_name">First Name</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="first-name" placeholder="Enter first name" name="first_name" required>
+                        <input type="text" class="form-control" id="first-name" placeholder="Enter first name" name="first_name">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="last_name">Last Name</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="last-name" placeholder="Enter last name" name="last_name" required>
+                        <input type="text" class="form-control" id="last-name" placeholder="Enter last name" name="last_name">
+                    </div>
+                </div>
+
+                {*                extended fields*}
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="reg-email">Email address</label>
+                    <div class="col-sm-4">
+                        <input type="email" class="form-control" id="email" placeholder="Email address" name="email">
+                    </div>
+                </div>
+
+                {*                extended fields*}
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="password">Password</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="password" placeholder="Registration password" name="password">
+                    </div>
+                </div>
+
+                {*                extended fields*}
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="confirm-password">Confirm password</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="confirm-password" placeholder="Confirm password" name="confirm_password">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="address_1">Address 1</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="address-1" placeholder="Enter address 1" name="address_1" required>
+                        <input type="text" class="form-control" id="address-1" placeholder="Enter address 1" name="address_1">
                     </div>
                 </div>
 
@@ -178,22 +220,21 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="city">City</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="city" placeholder="Enter city" name="city" required>
+                        <input type="text" class="form-control" id="city" placeholder="Enter city" name="city">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="postal_code">Postal code</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="postal-code" placeholder="Enter postal code" name="postal_code" required>
+                        <input type="text" class="form-control" id="postal-code" placeholder="Enter postal code" name="postal_code">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="country">Country</label>
                     <div class="col-sm-4">
-                        <select  class="form-control" id="country" name="country" required>
-                            <option>France</option>
+                        <select  class="form-control" id="country" name="country">
                             {foreach $countries as $country}
                                 <option>{$country['name']}</option>
                             {/foreach}
@@ -204,28 +245,57 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="country_code">Country code</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="country-code" placeholder="Enter country code" name="country_code" required value="33">
+                        <input type="text" class="form-control" id="country-code" placeholder="Enter country code" name="country_code">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="mobile_number">Mobile Number</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="mobile-number" placeholder="Enter mobile number" name="mobile_number" required>
+                        <input type="text" class="form-control" id="mobile-number" placeholder="Enter mobile number" name="mobile_number">
                     </div>
                 </div>
+
+
+                {*                extended fields*}
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="facebook">Facebook link</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="facebook" placeholder="Facebook link" name="facebook">
+                    </div>
+                </div>
+                {*                extended fields*}
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="instagram">Instagram link</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="instagram" placeholder="Instagram link" name="instagram">
+                    </div>
+                </div>
+
+                {*                extended fields*}
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="acceptsReturn">Accept return</label>
+                    <div class="col-sm-4">
+                        <select  class="form-control" id="acceptsReturn" name="acceptsReturn">
+                            <option>{$reg_accept_return}</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                </div>
+                {*                extended fields*}
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="number_of_stores">No. of store(s)</label>
                     <div class="col-sm-4">
-                        <input type="number" class="form-control" id="number-of-stores" placeholder="Enter No. of store(s)" name="number_of_stores" required>
+                        <input type="number" class="form-control" id="number-of-stores" placeholder="Enter No. of store(s)" name="number_of_stores">
                     </div>
                 </div>
 
-{*                Hiddin fields*}
+                {*                Hiddin fields*}
                 <input type="hidden" class="latitude-class" id="latitude-id" name="latitude">
                 <input type="hidden" class="longitude-class" id="longitude-id" name="longitude">
-{*                Hiddin fields off*}
+                {*                Hiddin fields off*}
 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
@@ -233,8 +303,9 @@
                     </div>
                 </div>
             </form>
+
         </div>
-{*        Code confirmation form----------------------------------------------------------------------------------------------------------------------------*}
+        {*        Code confirmation form----------------------------------------------------------------------------------------------------------------------------*}
         <div id="confirmation" class="panel-body confirmation">
             <form class="form-horizontal" method="post">
                 <div class="form-group">

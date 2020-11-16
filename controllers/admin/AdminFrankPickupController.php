@@ -32,7 +32,7 @@ class AdminFrankPickupController extends ModuleAdminController
     {
         $baseUrl = 'https://p-post.herokuapp.com/api/v1/orders/store/';
         $storeId = Configuration::get('FRANK_ID');
-        $endPoint = '/all';
+        $endPoint = '/all/all';
         $api_franks = json_decode($this->frank_api->getRequests($baseUrl . $storeId . $endPoint, Configuration::get('FRANK_TOKEN')), true);
         usort($api_franks['data'], function($firstItem, $secondItem) {
             $timeStamp1 = strtotime($firstItem['createdAt']);

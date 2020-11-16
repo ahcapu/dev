@@ -1,5 +1,90 @@
 $(document).ready(function () {
 
+    loadContact();
+    function loadContact() {
+        $.ajax({
+            url: '../modules/frank/ajax/contactDetailAjax.php',
+            method: 'get',
+            success: function(response){
+                response = JSON.parse(response)
+                if (response.status === 200) {
+                    document.getElementById('contact-person').value = response.data.contactDetail.name;
+                    document.getElementById('contact-phone').value = response.data.contactDetail.mobile;
+                    document.getElementById('contact-language').value = response.data.contactDetail.language;
+                }
+            }
+        });
+    }
+    loadEmailVerificationSection();
+    function loadEmailVerificationSection() {
+        $.ajax({
+            url: '../modules/frank/ajax/emailVerificationSectionAjax.php',
+            method: 'get',
+            success: function(response){
+                response = JSON.parse(response)
+                let html='';
+                response.forEach(function (res) {
+                    html +='<form method="post" class="resend-verification-form">';
+                    html +='<div class="row">';
+                    html +='<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">';
+                    html +='<label for="">Email</label>';
+                    html +=`<input type="text" name="verification_email" value="${res.email}" class="form-control" disabled style="border: unset; background-color: white;">`;
+                    html +='</div>';
+                    html +='<div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">';
+                    html +='<label for="">Role</label>';
+                    html +=`<input type='text' name='verification_role' value='${res.role}' class='form-control' disabled style='border: unset; background-color: white;'>`;
+                    html +='</div>';
+                    html +='<div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">';
+                    html +='<label for="">Company</label>';
+                    html +='<input type="text" name="verification_role" value="" disabled style="border: unset; background-color: white;">';
+                    html +='</div>';
+                    html +='<div class="col-xs-12 col-sm-12 col-md-3 col-lg-2">';
+                    html +='<label for="">Status</label>';
+                    html +='<input type="text" name="verification_role" value="" disabled style="border: unset; background-color: white;">';
+                    html +='</div>';
+                    html +='<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">';
+                    html +='<label for="" class="text-white">Status</label>';
+                    html +='<button type="submit" name="btn_resend_verification" class="btn form-control email-address-resend-verification">Resend verification</button>';
+                    html +='</div>';
+                    html +='</div>';
+                    html +='</form>';
+                });
+                // $('.container-email-address').append(html);
+                // console.log(html);
+                // console.log(response);
+                // if (response.status === 'success') {
+                //     $('.email-verification-section').html(response.html);
+                // }
+            }
+        });
+    }
+
+
+    $('.upload-image-form').on('submit', function (event){
+        event.preventDefault();
+        let fd = new FormData();
+        fd.append('file', $('#upload-image').prop('files')[0]);
+        // console.log(fd);
+        $.ajax({
+            url: '../modules/frank/ajax/uploadImageAjax.php',
+            method: 'POST',
+            data: fd,
+            cache:false,
+            contentType: false,
+            processData: false,
+            success:function(data){
+                // data = JSON.parse(data);
+                console.log(data);
+                // console.log("success");
+                // console.log(data);
+            },
+            error: function(data){
+                console.log("error");
+                console.log(data);
+            }
+        });
+    });
+
     document.getElementById('ctr-2-invoice').classList.remove('ctr-active');
     document.getElementById('ctr-3-warehouse').classList.remove('ctr-active');
     $('.account').on('click', function () {
@@ -25,13 +110,14 @@ $(document).ready(function () {
         e.preventDefault();
         $form = $(this);
         $.ajax({
-            url: '../modules/frank/postAjax.php',
+            url: '../modules/frank/ajax/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
                 response = JSON.parse(response);
                 console.log(response.status);
                 if (response.status === 200) {
+                    loadContact();
                     $(".contact-details-form")[0].reset();
                     e.stopPropagation();
                     return $.growl.notice({
@@ -57,13 +143,14 @@ $(document).ready(function () {
         $form = $(this);
 
         $.ajax({
-            url: '../modules/frank/postAjax.php',
+            url: '../modules/frank/ajax/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
                 response = JSON.parse(response);
                 console.log(response.status);
                 if (response.status === 200) {
+                    loadEmailVerificationSection();
                     $(".update-email-address-form")[0].reset();
                     e.stopPropagation();
                     return $.growl.notice({
@@ -83,12 +170,14 @@ $(document).ready(function () {
         });
     });
 
+
+
     $('.resend-verification-form').on('submit', function (e){
         e.preventDefault();
         $form = $(this);
 
         $.ajax({
-            url: '../modules/frank/postAjax.php',
+            url: '../modules/frank/ajax/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
@@ -118,7 +207,7 @@ $(document).ready(function () {
         $form = $(this);
 
         $.ajax({
-            url: '../modules/frank/postAjax.php',
+            url: '../modules/frank/ajax/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
@@ -148,7 +237,7 @@ $(document).ready(function () {
         e.preventDefault();
         $form = $(this);
         $.ajax({
-            url: '../modules/frank/deleteAccountAjax.php',
+            url: '../modules/frank/ajax/deleteAccountAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
@@ -177,7 +266,7 @@ $(document).ready(function () {
         e.preventDefault();
         $form = $(this);
         $.ajax({
-            url: '../modules/frank/postAjax.php',
+            url: '../modules/frank/ajax/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {
@@ -207,7 +296,7 @@ $(document).ready(function () {
 
     function loadWarehouseData(){
         $.ajax({
-            url: '../modules/frank/showWarehouseAjax.php',
+            url: '../modules/frank/ajax/showWarehouseAjax.php',
             method: 'get',
             success: function(response){
                 response = JSON.parse(response)
@@ -220,6 +309,7 @@ $(document).ready(function () {
         });
     }
 
+
     function deleteWarehouse() {
         $('.delete-warehouse').on('click', function (){
             if (confirm('Are you sure you want to delete warehouse?')) {
@@ -227,7 +317,7 @@ $(document).ready(function () {
                 // console.log(id);
                 $.ajax({
                     async: false,
-                    url: '../modules/frank/deleteWarehouseAjax.php',
+                    url: '../modules/frank/ajax/deleteWarehouseAjax.php',
                     method: 'POST',
                     data: {warehouse_id: id},
                     success: function (response) {

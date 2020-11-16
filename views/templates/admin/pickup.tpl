@@ -19,49 +19,47 @@
             </tr>
             </thead>
             <tbody>
-            <div class="status role="alert"></div>
-            {foreach from=$api_franks item=$api_frank}
-                {usort($api_frank, $api_frank['createdAt'])}
-                <tr>
-                    <form action="" method="post" class="form-ready-for-pickup">
-                        <input type="hidden" name="_id" value="{$api_frank['_id']}"></th>
-                        <td>{$api_frank['dropoff']['shortAddress']}</td>
-                        <td>{$api_frank['dropoff']['city']}</td>
-                        <td>{$api_frank['dropoff']['country']}</td>
-{*                        {foreach $api_frank['commodities'] as $commodity}*}
-{*                            <td>{$commodity['name']}</td>*}
-{*                        {/foreach}*}
-                        <td>
+                <div class="status role="alert"></div>
+                {foreach from=$api_franks item=$api_frank}
+                    {usort($api_frank, $api_frank['createdAt'])}
+                    <tr>
+                        <form method="post" class="form-ready-for-pickup">
+                            <input type="hidden" name="_id" value="{$api_frank['_id']}">
+                            <td>{$api_frank['dropoff']['shortAddress']}</td>
+                            <td>{$api_frank['dropoff']['city']}</td>
+                            <td>{$api_frank['dropoff']['country']}</td>
+                            <td>
                             <ul>
                                 {foreach $api_frank['commodities'] as $commodity}
                                     <li>{$commodity['name']}</li>
                                 {/foreach}
                             </ul>
                         </td>
-{*                        <td>{count(array_column($api_frank['commodities'], 'quantity'))}</td>*}
                         <td>{array_sum(array_column($api_frank['commodities'], 'quantity'))}</td>
                         <td>{$api_frank['createdAt']|date_format}</td>
                         <td>
                             <input type="date" name="pickupDate" id="pickDate" value="{$api_frank['pickupDate']|date_format:"%Y-%m-%d"}" required>
                         </td>
                         <td>
+{*                            <button type="submit" class="btn btn-success" id="ready-for-pickup-btn">Ready for pickup</button>*}
                             {if $api_frank['createdAt'] == $api_frank['updatedAt'] && empty($api_frank['timeLogs']['cancelled'])}
-                                <button type="submit" class="btn btn-success">Ready for pickup</button>
+                                <button type="submit" class="btn btn-success" id="ready-for-pickup-btn">Ready for pickup</button>
                             {elseif $api_frank['createdAt'] != $api_frank['updatedAt'] && empty($api_frank['timeLogs']['cancelled'])}
                                 <button type="submit" class="btn btn-danger">Ready for pickup</button>
                             {/if}
                         </td>
                     </form>
-                    <form class="order-cancel">
-                        <input type="hidden" name="_id" value="{$api_frank['_id']}">
-                        {if empty($api_frank['timeLogs']['cancelled'])}
-                            <td><button type="submit" class="btn btn-danger">Cancel order</button></td>
-                        {/if}
+                        <form method="post" class="order-cancel">
+                            <input type="hidden" name="_id" value="{$api_frank['_id']}">
+{*                            <td><button type="submit" class="btn btn-danger" id="cancel-order-btn">Cancel order</button></td>*}
+                            {if empty($api_frank['timeLogs']['cancelled'])}
+                                <td><button type="submit" class="btn btn-danger" id="cancel-order-btn">Cancel order</button></td>
+                            {/if}
                     </form>
-                </tr>
-            {/foreach}
+                    </tr>
+                {/foreach}
             </tbody>
         </table>
-        <br>
-    </div>
+    <br>
+</div>
 </div>

@@ -8,7 +8,7 @@ $(document).ready(function () {
         e.preventDefault();
         $form = $(this);
         $.ajax({
-            url: '../modules/frank/contactDetailAjax.php',
+            url: '../modules/frank/ajax/postAjax.php',
             method: 'POST',
             data: $form.serialize(),
             success: function(response) {

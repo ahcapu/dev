@@ -17,11 +17,11 @@
         </div>
     </div>
 
-{*    <div class="tab-mid-container">*}
-{*        <a href="#" class="upload-file upload">Upload file</a>*}
-{*        <a href="#" class="upload-icon upload"><i class="material-icons">system_update_alt</i></a>*}
-{*        <button class="btn-new-shipment"><i class="material-icons" style="font-size: 14px; font-weight: bold;">add</i> New shipment</button>*}
-{*    </div>*}
+    {*    <div class="tab-mid-container">*}
+    {*        <a href="#" class="upload-file upload">Upload file</a>*}
+    {*        <a href="#" class="upload-icon upload"><i class="material-icons">system_update_alt</i></a>*}
+    {*        <button class="btn-new-shipment"><i class="material-icons" style="font-size: 14px; font-weight: bold;">add</i> New shipment</button>*}
+    {*    </div>*}
     <div class="detail-container">
         <div class="status-tab">
             <input id="order-status" type="hidden" value="{$get_order_by_id['status']}">

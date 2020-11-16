@@ -160,15 +160,15 @@
             <div class="form-group">
                 <div class="row">
                 <div class="col-sm-2">
-                    <input type="radio" name="delivery_type" id="flex" value="flex">
+                    <input type="radio" name="delivery_type" id="flex" value="Flex">
                     <label style="color: #9d9d9d;" for="">Flex</label>
                 </div>
                 <div class="col-sm-2">
-                    <input type="radio" name="delivery_type" value="standard" id="standard">
-                    <label for=""  style="color: #9d9d9d;">Standard</label>
+                    <input type="radio" name="delivery_type" value="Classic" id="standard">
+                    <label for=""  style="color: #9d9d9d;">Classic</label>
                 </div>
                 <div class="col-sm-2">
-                    <input type="radio" name="delivery_type" value="green" id="green">
+                    <input type="radio" name="delivery_type" value="Green" id="green">
                     <label for="" style="color: #9d9d9d;">Green</label>
                 </div>
             </div>
@@ -191,7 +191,7 @@
             <div class="form-group">
                 <div class="row">
                 <div class="col-sm-6">
-                    <label style="color: #e07047; for="">Dropoff address</label>
+                    <label style="color: #e07047; for="">Pickup address</label>
                     <select name="pickup_address" style="border-radius: 9px;">
                         {foreach $api_warehouses as $api_warehouse}
                             <option>{$api_warehouse['name']}</option>
@@ -199,7 +199,7 @@
                     </select>
                 </div>
                 <div class="col-sm-6">
-                    <label style="color: #e07047; for="">Dropoff address</label>
+                    <label style="color: #e07047; for="">Return address</label>
                     <select name="return_address" style="border-radius: 9px;">
                         {foreach $api_warehouses as $api_warehouse}
                             <option>{$api_warehouse['name']}</option>

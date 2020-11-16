@@ -37,8 +37,9 @@
             <div class="container-fluid tabs-container">
                 <div class="buttonContainer">
                     <button id="tab-btn1">Pending</button>
-                    <button id="tab-btn2">Shipped</button>
-                    <button id="tab-btn3">Cancelled</button>
+                    <button id="tab-btn2">In progress</button>
+                    <button id="tab-btn3">Shipped</button>
+                    <button id="tab-btn4">Cancelled</button>
                 </div>
                 <div class="main-tab">
                     <div class="tabPanel" style="height: 450px;overflow-y: scroll;">
@@ -56,6 +57,38 @@
                             <tbody id="search-pending">
                             {foreach $api_franks as $api_frank}
                                 {if $api_frank['status'] === 'pending'}
+                                    <tr>
+                                        <td class="col-sm-2">{$api_frank['orderNumber']}</td>
+                                        <td class="col-sm-2">{$api_frank['contact']['name']}</td>
+                                        <td class="col-sm-2">{$api_frank['transporter']['firstName']}</td>
+                                        <td class="col-sm-2">{$api_frank['pickupDate']|date_format:"%m/%d/%Y"}</td>
+                                        <td class="col-sm-2">{$api_frank['dropoff']['country']}</td>
+                                        <td class="col-sm-2">
+                                            <a href="{$orderDetails}" data-target="detail" data-id="{$api_frank['_id']}" class="pencil">
+                                                <i class="material-icons" style="font-size: 20px; ">create</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {/if}
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tabPanel" style="height: 450px;overflow-y: scroll;">
+                        <table class="table tabPanelTable">
+                            <thead>
+                            <tr>
+                                <th class="col-sm-2">Tracking number</th>
+                                <th class="col-sm-2">Recipients</th>
+                                <th class="col-sm-2">Transporters</th>
+                                <th class="col-sm-2 ">Delivery dates</th>
+                                <th class="col-sm-2">Status</th>
+                                <th class="col-sm-2"></th>
+                            </tr>
+                            </thead>
+                            <tbody id="search-pending">
+                            {foreach $api_franks as $api_frank}
+                                {if $api_frank['status'] === 'accepted'}
                                     <tr>
                                         <td class="col-sm-2">{$api_frank['orderNumber']}</td>
                                         <td class="col-sm-2">{$api_frank['contact']['name']}</td>

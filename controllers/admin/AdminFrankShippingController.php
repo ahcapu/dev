@@ -3,7 +3,7 @@
 
 class AdminFrankShippingController extends ModuleAdminController
 {
-    private $frank_api = null;
+    private $frank_api;
 
     public function __construct()
     {
@@ -30,7 +30,7 @@ class AdminFrankShippingController extends ModuleAdminController
     {
         $baseUrl = 'https://p-post.herokuapp.com/api/v1/orders/store/';
         $storeId = Configuration::get('FRANK_ID');
-        $endPoint = '/all';
+        $endPoint = '/all/all';
         $api_franks = json_decode($this->frank_api->getRequests($baseUrl . $storeId . $endPoint, Configuration::get('FRANK_TOKEN')), true);
 
         $shipping = $this->get_ahref('AdminFrankShipping');
@@ -38,22 +38,25 @@ class AdminFrankShippingController extends ModuleAdminController
         $new_shipment = $this->get_ahref('AdminFrankNewShipment');
         $settings = $this->get_ahref('AdminFrankSettings');
         $orderDetails = $this->get_ahref('AdminFrankOrderDetails');
+//        print_r($orderDetails); die();
 
         parent::initContent();
-        $this->context->smarty->assign(
-           array(
-               'api_franks' => $api_franks['data'],
-               'shipping' => $shipping,
-               'returns' => $returns,
-               'new_shipment' => $new_shipment,
-               'settings' => $settings,
-               'pencil_id' => Configuration::get('pencil_id'),
-               'orderDetails' => $orderDetails
-           )
-        );
+        if ($this->activate()) {
+            $this->context->smarty->assign(
+                array(
+                    'api_franks' => $api_franks['data'],
+                    'shipping' => $shipping,
+                    'returns' => $returns,
+                    'new_shipment' => $new_shipment,
+                    'settings' => $settings,
+                    'pencil_id' => Configuration::get('pencil_id'),
+                    'orderDetails' => $orderDetails
+                )
+            );
 
-        if (Tools::isSubmit('import_csv_btn')) {
-            $this->uploadFile();
+            if (Tools::isSubmit('import_csv_btn')) {
+                $this->uploadFile();
+            }
         }
 
         $this->setTemplate('shipping.tpl');
@@ -71,6 +74,7 @@ class AdminFrankShippingController extends ModuleAdminController
         $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/bootstrap.css');
         $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/all.css');
         $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/shipping.css');
+        $this->addCSS(_PS_MODULE_DIR_ . '/frank/views/css/admin/bootstrap.js');
         $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/all.js');
         $this->addJS(_PS_MODULE_DIR_ . '/frank/views/js/admin/shipping.js');
         parent::setMedia();
@@ -78,7 +82,8 @@ class AdminFrankShippingController extends ModuleAdminController
 
     private function get_ahref($controller){
         $stat = _PS_ADMIN_DIR_;
-        $admin_folder = substr(strrchr($stat, "admin "), 0);
+//        $admin_folder = substr(strrchr($stat, "admin"), 0);
+        $admin_folder = substr($stat, strpos($stat, "admin"));
         $token = Tools::getAdminTokenLite($controller);
         return _PS_BASE_URL_.__PS_BASE_URI__.$admin_folder.'/index.php?controller='.$controller.'&token='.$token;
     }
@@ -96,6 +101,16 @@ class AdminFrankShippingController extends ModuleAdminController
                 $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/createBulkShipment', $params, Configuration::get('FRANK_TOKEN'));
             }
         }
+    }
+
+    public function activate()
+    {
+        return true;
+        $active = $this->frank_api->getRequests('https://p-post.herokuapp.com/api/v1/stores/myprofile/' . Configuration::get('FRANK_ID'), Configuration::get('FRANK_TOKEN'));
+        $active = json_decode($active, true);
+        if ($active['status'] === 200)
+            return $active['data']['active'];
+        return 'Something went wrong';
     }
 
 }

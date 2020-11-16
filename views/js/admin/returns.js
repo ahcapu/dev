@@ -11,6 +11,10 @@ $(document).ready(function () {
         showPanel(2, '#dee3e8');
     });
 
+    document.getElementById('tab-btn4').addEventListener('click', function (){
+        showPanel(3, '#dee3e8');
+    });
+
     let tabButtons = document.querySelectorAll('.tabs-container .buttonContainer button');
 
     let tabPanels = document.querySelectorAll('.tabs-container .tabPanel');
@@ -39,7 +43,7 @@ $(document).ready(function () {
         // console.log(id);
         $.ajax({
             async: false,
-            url: '../modules/frank/orderDetailsAjax.php',
+            url: '../modules/frank/ajax/orderDetailsAjax.php',
             method: 'POST',
             data: {_id: id},
             success: function (response) {

@@ -27,11 +27,10 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
 class Frank extends CarrierModule
 {
-    private $frank_api = null;
-    protected $config_form = false;
+    public $id_carrier;
+    private $frank_api;
 
     public function __construct()
     {
@@ -41,9 +40,7 @@ class Frank extends CarrierModule
         $this->author = 'HiTech';
         $this->need_instance = 0;
         $this->error_count = 0;
-        /**
-         * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
-         */
+
         $this->bootstrap = true;
 
         parent::__construct();
@@ -55,73 +52,47 @@ class Frank extends CarrierModule
 
         include_once _PS_MODULE_DIR_ . 'frank/api/FrankApi.php';
 
-//        $this->callApi();
         $this->frank_api = new FrankApi();
+
     }
 
-    /**
-     * Don't forget to create update methods if needed:
-     * http://doc.prestashop.com/display/PS16/Enabling+the+Auto-Update
-     */
     public function install()
     {
-        if (extension_loaded('curl') == false)
-        {
-            $this->_errors[] = $this->l('You have to enable the cURL extension on your server to install this module');
+        if (
+            !parent::install() ||
+            !$this->installCarriers() ||
+            !$this->registerHook('actionCarrierUpdate') ||
+            !$this->registerHook('header') ||
+            !$this->registerHook('displayOrderConfirmation') ||
+            !$this->registerHook('displayCarrierList') ||
+            !$this->installModuleTab('AdminFrankShipping', 'Shipping', Tab::getIdFromClassName('AdminParentShipping')) ||
+            !$this->installModuleTab('AdminFrankReturns', 'Returns', Tab::getIdFromClassName('AdminParentShipping')) ||
+            !$this->installModuleTab('AdminFrankPickup', 'Pickup', Tab::getIdFromClassName('AdminParentShipping')) ||
+            !$this->installModuleTab('AdminFrankOrderDetails', 'OrderDetails', 0) ||
+            !$this->installModuleTab('AdminFrankNewShipment', 'NewShipment', 0) ||
+            !$this->installModuleTab('AdminFrankSettings', 'Settings', 0)
+        )
             return false;
-        }
 
-        $carrier = $this->addCarrier('FRANK FLEX');
-        $this->addZones($carrier);
-        $this->addGroups($carrier);
-        $this->addRanges($carrier);
-
-        $carrier = $this->addCarrier('FRANK GREEN');
-        $this->addZones($carrier);
-        $this->addGroups($carrier);
-        $this->addRanges($carrier);
-
-        $carrier = $this->addCarrier('FRANK CLASSIC');
-        $this->addZones($carrier);
-        $this->addGroups($carrier);
-        $this->addRanges($carrier);
-
-        Configuration::updateValue('FRANK_LIVE_MODE', false);
-
-        return parent::install() &&
-            $this->registerHook('header') &&
-            $this->registerHook('actionValidateCustomerAddressForm') &&
-            $this->registerHook('backOfficeHeader') &&
-            $this->registerHook('displayOrderConfirmation') &&
-            $this->registerHook('updateCarrier') &&
-            $this->registerHook('actionFrontControllerSetMedia') &&
-            $this->registerHook('displayBeforeBodyClosingTag') &&
-            $this->installModuleTab('AdminFrankShipping', 'Shipping', Tab::getIdFromClassName('AdminParentShipping')) &&
-            $this->installModuleTab('AdminFrankReturns', 'Returns', Tab::getIdFromClassName('AdminParentShipping')) &&
-            $this->installModuleTab('AdminFrankPickup', 'Pickup', Tab::getIdFromClassName('AdminParentShipping')) &&
-            $this->installModuleTab('AdminFrankOrderDetails', 'OrderDetails', 0) &&
-            $this->installModuleTab('AdminFrankNewShipment', 'NewShipment', 0) &&
-            $this->installModuleTab('AdminFrankSettings', 'Settings', 0)
-            ;
+        return true;
     }
 
     public function uninstall()
     {
-        Configuration::deleteByName('FRANK_LIVE_MODE');
-
-        return parent::uninstall()
-            && $this->uninstallModuleTab('AdminFrank')
+        return
+            parent::uninstall()
+            && $this->unregisterHook('header')
+            && $this->unregisterHook('displayOrderConfirmation')
+//            && $this->unregisterHook('actionCartSave')
             && $this->uninstallModuleTab('AdminFrankShipping')
             && $this->uninstallModuleTab('AdminFrankReturns')
-            && $this->uninstallModuleTab('AdminFrankPickup')
             && $this->uninstallModuleTab('AdminFrankSettings')
             && $this->uninstallModuleTab('AdminFrankOrderDetails')
-            && $this->uninstallModuleTab('AdminFrankSettings')
-            && $this->uninstallModuleTab('AdminFrankNewShipment');
+            && $this->uninstallModuleTab('AdminFrankNewShipment')
+            && $this->uninstallModuleTab('AdminFrankPickup');
     }
 
-
-    // Tabs
+    // Tabs install
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
     {
         $tab = new Tab();
@@ -140,6 +111,7 @@ class Frank extends CarrierModule
         return true;
     }
 
+    // Tabs uninstall
     private function uninstallModuleTab($tab_class)
     {
         $id_tab = Tab::getIdFromClassName($tab_class);
@@ -151,407 +123,301 @@ class Frank extends CarrierModule
         return false;
     }
 
-    /**
-     * Load the configuration form
-     */
     public function getContent()
     {
         $countries = Country::getCountries($this->context->country);
-//        echo '<pre>'; print_r($countries); die();
-//        $countryName = Configuration::get('country_name');
+        if (Tools::isSubmit('submitFrankModule')) {
 
-        if (Tools::isSubmit('submitConfirmation')) {
-            $params = array(
-                'mobile' => Tools::getValue('mobile'),
-                'smsCode' => Tools::getValue('smsCode'),
-            );
-//            $res = json_decode($params, true);
-            $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/stores/verifylogin', $params);
-            $res = json_decode($res, true);
-//            echo '<pre>'; print_r($res); die();
-            if ($res['status'] === 200) {
-                Configuration::updateValue('FRANK_STORE_FIRSTNAME', Tools::getValue('con_first_name'));
-                Configuration::updateValue('FRANK_STORE_LASTNAME', Tools::getValue('con_last_name'));
-                Configuration::updateValue('FRANK_ADDRESS_1', Tools::getValue('con_address_1'));
-                Configuration::updateValue('FRANK_ADDRESS_2', Tools::getValue('con_address_2'));
-                Configuration::updateValue('FRANK_ADDRESS_3', Tools::getValue('con_address_3'));
-                Configuration::updateValue('FRANK_STORE_CITY', Tools::getValue('con_city'));
-                Configuration::updateValue('FRANK_STORE_ZIPCODE', Tools::getValue('con_zip_code'));
-                Configuration::updateValue('FRANK_STORE_COUNTRY', Tools::getValue('con_country'));
-                Configuration::updateValue('FRANK_COUNTRY_CODE', Tools::getValue('con_country_code'));
-                Configuration::updateValue('FRANK_MOBILE', Tools::getValue('con_mobile'));
-                Configuration::updateValue('FRANK_STORE_BUSINESS', Tools::getValue('con_stores'));
-                Configuration::updateValue('FRANK_LATITUDE', Tools::getValue('con_latitude'));
-                Configuration::updateValue('FRANK_LONGITUDE', Tools::getValue('con_longitude'));
-                Configuration::updateValue('FRANK_UNIQUE_ID', md5(Configuration::get('PS_SHOP_DOMAIN') . Configuration::get('PS_SHOP_NAME')));
+            if (
+                Tools::getValue('first_name') &&
+                Tools::getValue('last_name') &&
+                Tools::getValue('email') &&
+                Tools::getValue('password') &&
+                Tools::getValue('confirm_password') &&
+                Tools::getValue('address_1') &&
+                Tools::getValue('city') &&
+                Tools::getValue('postal_code') &&
+                Tools::getValue('country_code') &&
+                Tools::getValue('country') &&
+                Tools::getValue('mobile_number') &&
+                Tools::getValue('latitude') &&
+                Tools::getValue('longitude') &&
+                Tools::getValue('number_of_stores') >=0
+            ) {
 
-                Configuration::updateValue('FRANK_TOKEN', $res['data']['token']);
-                Configuration::updateValue('FRANK_ID', $res['data']['_id']);
+                if (Tools::getValue('password') === Tools::getValue('confirm_password')) {
+                    $form_data = $this->getConfigFormValues();
+                    if (empty(Configuration::get('FRANK_ID')) && empty(Configuration::get('FRANK_TOKEN'))) {
+                        $api_data = $this->postApiData();
+                        $res = $this->frank_api->doCurlRequest("https://p-post.herokuapp.com/api/v1/stores/signup", $api_data);
+                        $res = json_decode($res, true);
 
-//                echo '<pre>'; print_r($res); die();
-                $this->context->smarty->assign('confirmation', 'ok');
+                        if ($res['status'] == 200) {
+                            Configuration::updateValue('FRANK_TOKEN', $res['data']['token']);
+                            Configuration::updateValue('FRANK_ID', $res['data']['_id']);
+                            foreach ($form_data as $key => $value) {
+                                if ($key == 'FRANK_PASSWORD') {
+                                    $value = md5($value);
+                                }
+                                Configuration::updateValue($key, $value);
+                            }
+                        } else {
+                            $this->context->smarty->assign('api_error', 'ko');
+                        }
+                    } else {
+                        $this->context->smarty->assign('already_registered', 'ok');
+                    }
+                }
+                else {
+                    $this->context->smarty->assign('error_message_password', 'ko');
+                }
             }
+            else {
+                $this->context->smarty->assign('error_message_credentials', 'ko');
+            }
+            $this->context->smarty->assign('confirmation', 'ok');
         }
-        $this->context->smarty->assign(
-            array(
-                'countries' => $countries,
-            )
-        );
-        return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
+
+        $this->context->smarty->assign('countries', $countries);
+        return $this->display(__FILE__, 'views/templates/admin/signup.tpl');
     }
 
-    public function processConfiguration()
+    protected function getConfigFormValues()
     {
-        $form_values = array(
-            'FRANK_STORE_FIRSTNAME' => Tools::getValue('first_name'),
-            'FRANK_STORE_LASTNAME' => Tools::getValue('last_name'),
+        return array(
+            'FRANK_FIRSTNAME' => Tools::getValue('first_name'),
+            'FRANK_LASTNAME' => Tools::getValue('last_name'),
+            'FRANK_EMAIL' => Tools::getValue('email'),
+            'FRANK_PASSWORD' => Tools::getValue('password'),
             'FRANK_ADDRESS_1' => Tools::getValue('address_1'),
             'FRANK_ADDRESS_2' => Tools::getValue('address_2'),
             'FRANK_ADDRESS_3' => Tools::getValue('address_3'),
-            'FRANK_STORE_CITY' => Tools::getValue('city'),
-            'FRANK_STORE_ZIPCODE' => Tools::getValue('postal_code'),
-            'FRANK_STORE_COUNTRY' => Tools::getValue('country'),
-            'FRANK_COUNTRY_CODE' => Tools::getValue('country_code'),
+            'FRANK_CITY' => Tools::getValue('city'),
+            'FRANK_ZIPCODE' => Tools::getValue('postal_code'),
+            'FRANK_COUNTRY' => Tools::getValue('country'),
+            'FRANK_CODE' => Tools::getValue('country_code'),
             'FRANK_MOBILE' => Tools::getValue('mobile_number'),
-            'FRANK_STORE_BUSINESS' => Tools::getValue('number_of_stores'),
+            'FRANK_BUSINESS' => Tools::getValue('number_of_stores'),
+            'FRANK_FACEBOOK' => Tools::getValue('facebook'),
+            'FRANK_INSTAGRAM' => Tools::getValue('instagram'),
+            'FRANK_RETURN' => Tools::getValue('acceptsReturn'),
             'FRANK_LATITUDE' => Tools::getValue('latitude'),
             'FRANK_LONGITUDE' => Tools::getValue('longitude'),
-            'FRANK_UNIQUE_ID' => md5(Configuration::get('PS_SHOP_DOMAIN') . Configuration::get('PS_SHOP_NAME'))
+            'UNIQUE_ID' => md5(Configuration::get('PS_SHOP_DOMAIN') . Configuration::get('PS_SHOP_NAME') . Tools::getValue('email')),
+
         );
-
-        foreach($form_values as $key => $value) {
-            Configuration::updateValue($key, $value);
-        }
-
-//        Configuration::updateValue('FRANK_TOKEN', $res['data']['token']);
-//        Configuration::updateValue('FRANK_ID', $res['data']['_id']);
-
-//        if (!empty(Configuration::get('FRANK_ID'))){
-//            $data = array(
-//                '_id' => Configuration::get('FRANK_ID'),
-//                'name' => Configuration::get('PS_SHOP_NAME'),
-//                'platform' => 'Prestashop',
-//                'email' => Configuration::get('PS_SHOP_EMAIL'),
-//                'location1' => ['longitude' => $form_values['FRANK_LONGITUDE'], 'latitude' => $form_values['FRANK_LATITUDE']],
-////                'location2' => ['longitude' => $form_values['FRANK_LONGITUDE'], 'latitude' => $form_values['FRANK_LATITUDE']],
-////                'location3' => ['longitude' => $form_values['FRANK_LONGITUDE'], 'latitude' => $form_values['FRANK_LATITUDE']],
-//            );
-////            echo '<pre>'; print_r($data); die();
-////
-////            $res = $this->frank_api->doCurlRequest("https://p-post.herokuapp.com/api/v1/stores/update", $data, Configuration::get('FRANK_TOKEN'));
-////            $res = json_decode($res, true);
-//        } else {
-//            $data = array(
-//                'name' => Configuration::get('PS_SHOP_NAME'),
-//                'storeURL' => Configuration::get('PS_SHOP_DOMAIN'),
-//                'email' => Configuration::get('PS_SHOP_EMAIL'),
-//                'platform' => 'Prestashop',
-//                'location1' => ['longitude' => $form_values['FRANK_LONGITUDE'], 'latitude' => $form_values['FRANK_LATITUDE'] ],
-////                'location2' => ['longitude' => $form_values['FRANK_LONGITUDE'], 'latitude' => $form_values['FRANK_LATITUDE']],
-////                'location3' => ['longitude' => $form_values['FRANK_LONGITUDE'], 'latitude' => $form_values['FRANK_LATITUDE']],
-//                'firstName' => $form_values['FRANK_STORE_FIRSTNAME'],
-//                'lastName' => $form_values['FRANK_STORE_LASTNAME'],
-//                'address1' => $form_values['FRANK_ADDRESS_1'],
-//                'address2' => $form_values['FRANK_ADDRESS_2'],
-//                'address3' => $form_values['FRANK_ADDRESS_3'],
-//                'city' => $form_values['FRANK_STORE_CITY'],
-//                'country' => $form_values['FRANK_STORE_ZIPCODE'],
-//                'countryCode' => $form_values['FRANK_STORE_COUNTRY'],
-//                'zipCode' => $form_values['FRANK_COUNTRY_CODE'],
-//                'mobile' => $form_values['FRANK_MOBILE'],
-//                'totalStores' => (int)$form_values['FRANK_STORE_BUSINESS'],
-//                'uniqueID' => $form_values['uniqueID']
-//            );
-////            echo '<pre>'; print_r($data); die();
-////
-////            $res = $this->frank_api->doCurlRequest("https://p-post.herokuapp.com/api/v1/stores/signup", $data);
-////            $res = json_decode($res, true);
-////
-////            Configuration::updateValue('FRANK_TOKEN', $res['data']['token']);
-////            Configuration::updateValue('FRANK_ID', $res['data']['_id']);
-//        }
-
-//        return $data;
     }
 
-    public function getOrderShippingCost($params, $shipping_cost)
+    protected function postApiData()
     {
-        $res = null;
-//        if (Context::getContext()->customer->logged == true && !empty($params->id_carrier))
-//        {
-//
-//        }
-        $id_address_delivery = Context::getContext()->cart->id_address_delivery;
-        $address = new Address($id_address_delivery);
-        $addressArray = (array) $address;
+        $form_data = $this->getConfigFormValues();
+        return array(
+            'name' => Configuration::get('PS_SHOP_NAME'),
+            'storeURL' => Configuration::get('PS_SHOP_DOMAIN'),
+            'platform' => 'Prestashop',
+            'location1' => ['longitude' => $form_data['FRANK_LONGITUDE'], 'latitude' => $form_data['FRANK_LATITUDE'] ],
+            'firstName' => $form_data['FRANK_FIRSTNAME'],
+            'lastName' => $form_data['FRANK_LASTNAME'],
+            'email' => $form_data['FRANK_EMAIL'],
+            'password' => $form_data['FRANK_PASSWORD'],
+            'address1' => $form_data['FRANK_ADDRESS_1'],
+            'address2' => $form_data['FRANK_ADDRESS_2'],
+            'address3' => $form_data['FRANK_ADDRESS_3'],
+            'city' => $form_data['FRANK_CITY'],
+            'country' => $form_data['FRANK_ZIPCODE'],
+            'countryCode' => $form_data['FRANK_COUNTRY'],
+            'zipCode' => $form_data['FRANK_CODE'],
+            'mobile' => $form_data['FRANK_MOBILE'],
+            'totalStores' => (int)$form_data['FRANK_BUSINESS'],
 
-        $carrierName = $this->getCarrier($params->id_carrier);
-        $carrierName = $carrierName[0]['name'];
+            'facebook' => $form_data['FRANK_FACEBOOK'],
+            'instagram' => $form_data['FRANK_INSTAGRAM'],
+            'acceptsReturn' => $form_data['FRANK_RETURN'] = 'Yes' ? true : false,
 
-        $prodArr = $params->getProducts();
-
-        $prodDetail = [];
-        $totalWeight = 0;
-        $totalLength = 0;
-        $totalWidth = 0;
-        $totalHeight = 0;
-
-        for ($i=0; $i < count($prodArr); $i++) {
-
-            $totalWeight += $prodArr[$i]['weight'];
-            $totalLength += $prodArr[$i]['depth'];
-            $totalWidth += $prodArr[$i]['width'];
-            $totalHeight += $prodArr[$i]['height'];
-
-
-            $prodDetail[$i]['product_name'] = $prodArr[$i]['name'];
-            $prodDetail[$i]['id_product'] = $prodArr[$i]['id_product'];
-            $prodDetail[$i]['product_quantity'] = $prodArr[$i]['cart_quantity'];
-            $prodDetail[$i]['width'] = $prodArr[$i]['width'];
-            $prodDetail[$i]['height'] = $prodArr[$i]['height'];
-            $prodDetail[$i]['length'] = $prodArr[$i]['depth'];
-            $prodDetail[$i]['weight'] = $prodArr[$i]['weight'];
-
-        }
-
-        /**
-         * Send the details through the API
-         * Return the price sent by the API
-         */
-
-        $addArr = explode(',', $addressArray['address2']);
-
-        $result =
-            [
-                'type' => 'delivery',
-                'pickup' =>
-                    [
-                        'address' => Configuration::get('FRANK_ADDRESS_1'),
-                        'location' =>
-                            [
-                                (float)Configuration::get('FRANK_LONGITUDE'),
-                                (float)Configuration::get('FRANK_LATITUDE')
-                            ],
-                        'shortAddress' => Configuration::get('FRANK_ADDRESS_1'),
-                        'city' => Configuration::get('FRANK_STORE_CITY'),
-                        'country' => Configuration::get('FRANK_STORE_COUNTRY')
-                    ],
-                'dropoff' =>
-                    [
-                        'address' => pSQL($addressArray['address1']),
-                        'location' =>
-                            [
-                                (float) $addArr[1],
-                                (float) $addArr[0]
-                            ],
-                        'shortAddress' => pSQL($addressArray['address1']),
-                        'city' => pSQL($addressArray['city']),
-                        'country' => pSQL($addressArray['country'])
-                    ],
-                'commodities' => $prodDetail,
-
-                'contact' =>
-                    [
-                        'name' => $addressArray['firstname'] . ' ' . $addressArray['lastname'],
-                        'number' => !empty($addressArray['phone']) ? $addressArray['phone'] : '',
-                        'email' => $addressArray['email'],
-                        'countryCode' => '92'
-                    ],
-
-                'deliveryType' => $carrierName,
-                'totalWeight' => sprintf("%.2f",$totalWeight),
-                'totalWidth' => sprintf("%.2f",$totalWidth),
-                'totalHeight' => sprintf("%.2f",$totalHeight),
-                'totalLength' => sprintf("%.2f",$totalLength),
-                'priceImpact' => 20,
-                'orderNumber' => 420586190927,
-                'store' => Configuration::get('FRANK_ID')
-            ];
-
-        $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/rates', $result, Configuration::get('FRANK_TOKEN'));
-        $res = json_decode($res, true);
-        return ($res['data']['rates']['price']) + $shipping_cost;
-//        return $shipping_cost;
+            'uniqueID' => $form_data['UNIQUE_ID']
+        );
     }
 
-    public function getOrderShippingCostExternal($params)
+    public function installCarriers()
     {
+        $id_lang_default = Language::getIsoById(Configuration::get('PS_LANG_DEFAULT'));
+        $carriers_list = array(
+            'FRANK_FLEX' => 'Flex',
+            'FRANK_GREEN' => 'Green',
+            'FRANK_CLASSIC' => 'Classic',
+        );
+        foreach ($carriers_list as $carrier_key => $carrier_name)
+            if (Configuration::get($carrier_key) < 1)
+            {
+                // Create new carrier
+                $carrier = new Carrier();
+                $carrier->name = $carrier_name;
+                $carrier->id_tax_rules_group = 0;
+                $carrier->active = 1;
+                $carrier->deleted = 0;
+                foreach (Language::getLanguages(true) as $language)
+                    $carrier->delay[(int)$language['id_lang']] = 'Frank '.$carrier_name;
+                $carrier->shipping_handling = false;
+                $carrier->range_behavior = 0;
+                $carrier->is_module = true;
+                $carrier->shipping_external = true;
+                $carrier->external_module_name = $this->name;
+                $carrier->need_range = true;
+                if (!$carrier->add())
+                    return false;
+
+                // Associate carrier to all groups
+                $groups = Group::getGroups(true);
+                foreach ($groups as $group)
+                    Db::getInstance()->insert('carrier_group', array('id_carrier' => (int)$carrier->id, 'id_group' => (int)$group['id_group']));
+
+                // Create price range
+                $rangePrice = new RangePrice();
+                $rangePrice->id_carrier = $carrier->id;
+                $rangePrice->delimiter1 = '0';
+                $rangePrice->delimiter2 = '10000';
+                $rangePrice->add();
+
+                // Create weight range
+                $rangeWeight = new RangeWeight();
+                $rangeWeight->id_carrier = $carrier->id;
+                $rangeWeight->delimiter1 = '0';
+                $rangeWeight->delimiter2 = '10000';
+                $rangeWeight->add();
+
+                // Associate carrier to all zones
+                $zones = Zone::getZones(true);
+                foreach ($zones as $zone)
+                {
+                    Db::getInstance()->insert('carrier_zone', array('id_carrier' => (int)$carrier->id, 'id_zone' => (int)$zone['id_zone']));
+                    Db::getInstance()->insert('delivery', array('id_carrier' => (int)$carrier->id, 'id_range_price' => (int)$rangePrice->id, 'id_range_weight' => NULL, 'id_zone' => (int)$zone['id_zone'], 'price' => '0'));
+                    Db::getInstance()->insert('delivery', array('id_carrier' => (int)$carrier->id, 'id_range_price' => NULL, 'id_range_weight' => (int)$rangeWeight->id, 'id_zone' => (int)$zone['id_zone'], 'price' => '0'));
+                }
+
+                // Copy the carrier logo
+                copy(dirname(__FILE__).'/views/img/'.$carrier_key.'.jpg', _PS_SHIP_IMG_DIR_.'/'.(int)$carrier->id.'.jpg');
+
+                // Save the carrier ID in the Configuration table
+                Configuration::updateValue($carrier_key, $carrier->id);
+            }
 
         return true;
     }
 
-    protected function addCarrier($carrierName)
+    public function getOrderShippingCost($params, $shipping_cost)
     {
-        $carrier = new Carrier();
+        if ($this->activate()) {
+            if (Context::getContext()->customer->logged == true && !empty($params->id_carrier)) {
+                $res = null;
+                $id_address_delivery = Context::getContext()->cart->id_address_delivery;
+                $address = new Address($id_address_delivery);
+                $addressArray = (array) $address;
 
-        $carrier->name = $this->l($carrierName);
-        $carrier->is_module = true;
-        $carrier->active = 1;
-        $carrier->range_behavior = 1;
-        $carrier->need_range = 1;
-        $carrier->shipping_external = true;
-        $carrier->range_behavior = 0;
-        $carrier->external_module_name = $this->name;
-        $carrier->shipping_method = 2;
+                $carrierName = $this->getCarrier($params->id_carrier);
+                $carrierName = $carrierName[0]['name'];
 
-        foreach (Language::getLanguages() as $lang)
-            $carrier->delay[$lang['id_lang']] = $this->l('Super fast delivery');
+                $prodArr = $params->getProducts();
 
-        if ($carrier->add() == true)
-        {
-            @copy(dirname(__FILE__).'/views/img/carrier_image.jpg', _PS_SHIP_IMG_DIR_.'/'.(int)$carrier->id.'.jpg');
-            Configuration::updateValue('MYSHIPPINGMODULE_CARRIER_ID', (int)$carrier->id);
-            return $carrier;
+                $prodDetail = [];
+                $totalWeight = 0;
+                $totalLength = 0;
+                $totalWidth = 0;
+                $totalHeight = 0;
+
+                for ($i=0; $i < count($prodArr); $i++) {
+
+                    $totalWeight += $prodArr[$i]['weight'];
+                    $totalLength += $prodArr[$i]['depth'];
+                    $totalWidth += $prodArr[$i]['width'];
+                    $totalHeight += $prodArr[$i]['height'];
+
+
+                    $prodDetail[$i]['product_name'] = $prodArr[$i]['name'];
+                    $prodDetail[$i]['id_product'] = $prodArr[$i]['id_product'];
+                    $prodDetail[$i]['product_quantity'] = $prodArr[$i]['cart_quantity'];
+                    $prodDetail[$i]['width'] = $prodArr[$i]['width'];
+                    $prodDetail[$i]['height'] = $prodArr[$i]['height'];
+                    $prodDetail[$i]['length'] = $prodArr[$i]['depth'];
+                    $prodDetail[$i]['weight'] = $prodArr[$i]['weight'];
+
+                }
+
+                /**
+                 * Send the details through the API
+                 * Return the price sent by the API
+                 */
+
+                $addArr = explode(',', $addressArray['address2']);
+
+                $result =
+                    [
+                        'type' => 'delivery',
+                        'pickup' =>
+                            [
+                                'address' => Configuration::get('FRANK_ADDRESS_1'),
+                                'location' =>
+                                    [
+                                        (float)Configuration::get('FRANK_LONGITUDE'),
+                                        (float)Configuration::get('FRANK_LATITUDE')
+                                    ],
+                                'shortAddress' => Configuration::get('FRANK_ADDRESS_1'),
+                                'city' => Configuration::get('FRANK_STORE_CITY'),
+                                'country' => Configuration::get('FRANK_STORE_COUNTRY')
+                            ],
+                        'dropoff' =>
+                            [
+                                'address' => pSQL($addressArray['address1']),
+                                'location' =>
+                                    [
+                                        (float) $addArr[1],
+                                        (float) $addArr[0]
+                                    ],
+                                'shortAddress' => pSQL($addressArray['address1']),
+                                'city' => pSQL($addressArray['city']),
+                                'country' => pSQL($addressArray['country'])
+                            ],
+                        'commodities' => $prodDetail,
+
+                        'contact' =>
+                            [
+                                'name' => $addressArray['firstname'] . ' ' . $addressArray['lastname'],
+                                'number' => !empty($addressArray['phone']) ? $addressArray['phone'] : '',
+                                'email' => $addressArray['email'],
+                                'countryCode' => $this->countryCode(pSQL($addressArray['country'])),
+                            ],
+
+                        'deliveryType' => $carrierName,
+                        'totalWeight' => sprintf("%.2f",$totalWeight),
+                        'totalWidth' => sprintf("%.2f",$totalWidth),
+                        'totalHeight' => sprintf("%.2f",$totalHeight),
+                        'totalLength' => sprintf("%.2f",$totalLength),
+                        'priceImpact' => 20,
+                        'orderNumber' => 420586190927,
+                        'store' => Configuration::get('FRANK_ID')
+                    ];
+
+                $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/rates', $result, Configuration::get('FRANK_TOKEN'));
+                $res = json_decode($res, true);
+                return ($res['data']['rates']['price']) + $shipping_cost;
+//        return ($res['data']['rates']['price']);
+            }
         }
-
-        return false;
     }
 
-    protected function addGroups($carrier)
+    public function getOrderShippingCostExternal($params)
     {
-        $groups_ids = array();
-        $groups = Group::getGroups(Context::getContext()->language->id);
-        foreach ($groups as $group)
-            $groups_ids[] = $group['id_group'];
-
-        $carrier->setGroups($groups_ids);
-    }
-
-    protected function addRanges($carrier)
-    {
-        $range_price = new RangePrice();
-        $range_price->id_carrier = $carrier->id;
-        $range_price->delimiter1 = '0';
-        $range_price->delimiter2 = '10000';
-        $range_price->add();
-
-        $range_weight = new RangeWeight();
-        $range_weight->id_carrier = $carrier->id;
-        $range_weight->delimiter1 = '0';
-        $range_weight->delimiter2 = '10000';
-        $range_weight->add();
-    }
-
-    protected function addZones($carrier)
-    {
-        $zones = Zone::getZones();
-
-        foreach ($zones as $zone)
-            $carrier->addZone($zone['id_zone']);
+//        return 23;
+        return $this->getOrderShippingCost($params, 0);
     }
 
     public function hookDisplayOrderConfirmation($params)
     {
-        $order = $params['order'];
-        $deliveryAddress = new Address((int)$this->context->cart->id_address_delivery);
-        $addressArray = (array) $deliveryAddress;
-
-        $carrierName = $this->getCarrierName($order->id);
-        $id_customer=$order->id_customer;
-        $customer= new Customer((int)$id_customer);
-        
-
-        $orderDetail = $this->getOrderDetail($order->id);
-
-        $twelve_digit = '';
-        for($i = 0; $i < 12; $i++) { $twelve_digit .= mt_rand(0, 9); }
-
-
-        $addArr = explode(',', $addressArray['address2']);
-
-        $totalWeight = 0;
-        $totalLength = 0;
-        $totalWidth = 0;
-        $totalHeight = 0;
-
-        for ($i=0; $i < count($orderDetail); $i++) {
-
-            $totalWeight += $orderDetail[$i]['weight'];
-            $totalLength += $orderDetail[$i]['length'];
-            $totalWidth += $orderDetail[$i]['width'];
-            $totalHeight += $orderDetail[$i]['height'];
-
-//            $image = Product::getCover((int)$orderDetail[$i]['id_product']);
-//            $image = new Image($image['id_image']);
-//            $product_photo = _PS_BASE_URL_._THEME_PROD_DIR_.$image->getExistingImgPath().".". $image->image_format;
-//            $orderDetail[$i]['image'] = $product_photo;
-
-        }
-
-        $commodities = array();
-
-        for ($i = 0; $i < count($orderDetail); $i++) {
-            $image = Product::getCover((int)$orderDetail[$i]['id_product']);
-            $image = new Image($image['id_image']);
-            $product_photo = _PS_BASE_URL_._THEME_PROD_DIR_.$image->getExistingImgPath().".jpg";
-            $product_photo_array[] = $product_photo;
-            $commodities[] = $this->array_push_assoc($orderDetail[$i], 'images', $product_photo_array[$i]);
-        }
-
-        $result =
-            [
-                'type' => 'delivery',
-                'pickup' =>
-                    [
-                        'address' => Configuration::get('FRANK_ADDRESS_1'),
-                        'location' =>
-                            [
-                                (float)Configuration::get('FRANK_LONGITUDE'),
-                                (float)Configuration::get('FRANK_LATITUDE')
-                            ],
-                        'shortAddress' => Configuration::get('FRANK_ADDRESS_1'),
-                        'city' => Configuration::get('FRANK_STORE_CITY'),
-                        'country' => Configuration::get('FRANK_STORE_COUNTRY')
-                    ],
-                'dropoff' =>
-                    [
-                        'address' => pSQL($addressArray['address1']),
-                        'location' =>
-                            [
-                                (float) $addArr[1],
-                                (float) $addArr[0]
-                            ],
-                        'shortAddress' => pSQL($addressArray['address1']),
-                        'city' => pSQL($addressArray['city']),
-                        'country' => pSQL($addressArray['country'])
-                    ],
-                'commodities' => $commodities,
-
-                'pickupDate' => $order->date_add,
-                'contact' =>
-                    [
-                        'name' => $addressArray['firstname'] . ' ' . $addressArray['lastname'],
-                        'number' => !empty($addressArray['phone']) ? $addressArray['phone'] : '',
-                        'email' => $customer->email,
-                        'countryCode' => $this->countryCode(pSQL($addressArray['country'])),
-                    ],
-
-                'deliveryType' => $carrierName[0]['carrier_name'],
-                'totalWeight' => sprintf("%.2f",$totalWeight),
-                'totalWidth' => sprintf("%.2f",$totalWidth),
-                'totalHeight' => sprintf("%.2f",$totalHeight),
-                'totalLength' => sprintf("%.2f",$totalLength),
-                'priceImpact' => 20,
-                'orderNumber' => $twelve_digit,
-                'storeOrderID' => $order->reference,
-                'store' => Configuration::get('FRANK_ID')
-            ];
-//        echo '<pre>'; print_r($result); die();
-        $res = $this->frank_api->doCurlRequest('https://p-post.herokuapp.com/api/v1/orders/addEcommerceOrder', $result, Configuration::get('FRANK_TOKEN'));
-
-    }
-
-
-    /**
-     * Add the CSS & JavaScript files you want to be loaded in the BO.
-     */
-    public function hookBackOfficeHeader()
-    {
-        if (Tools::getValue('frank') == $this->name) {
-            $this->context->controller->addJS($this->_path.'views/js/back.js');
-            $this->context->controller->addCSS($this->_path.'views/css/back.css');
+        if ($this->activate()) {
+            $controller = $this->getHookController('orderConfirmation');
+            return $controller->run($params);
         }
     }
+
 
     /**
      * Add the CSS & JavaScript files you want to be added on the FO.
@@ -561,61 +427,38 @@ class Frank extends CarrierModule
         $this->context->controller->addJS($this->_path.'/views/js/front.js');
         $this->context->controller->addCSS($this->_path.'/views/css/front.css');
     }
+
     public function hookActionFrontControllerSetMedia($params)
     {
-      $this->context->controller->addCSS($this->_path.'/views/css/front.css');
+        $this->context->controller->addCSS($this->_path.'/views/css/front.css');
 
     }
 
-    public function hookUpdateCarrier($params)
+    public function getHookController($hook_name)
     {
-        /**
-         * Not needed since 1.5
-         * You can identify the carrier by the id_reference
-         */
+        require_once(dirname(__FILE__).'/controllers/hook/'. $hook_name.'.php');
+        $controller_name = $this->name.$hook_name.'Controller';
+        $controller = new $controller_name($this, __FILE__, $this->_path);
+        return $controller;
     }
 
-    public function getOrderDetail($orderId){
-        // Build query
-        $result = Db::getInstance()->executeS(
-            'SELECT ' ._DB_PREFIX_ .'order_detail.`product_name` "name", 
-                    ' ._DB_PREFIX_ .'order_detail.`product_quantity` "quantity",
-                    ' ._DB_PREFIX_ .'product.`id_product`,
-                    ' ._DB_PREFIX_ .'product.`weight`,
-                    ' ._DB_PREFIX_ .'product.`depth` "length",
-                    ' ._DB_PREFIX_ .'product.`width`,
-                    ' ._DB_PREFIX_ .'product.`height` 
-            FROM ' ._DB_PREFIX_ .'order_detail
-            LEFT JOIN ' ._DB_PREFIX_ .'product
-            ON ' ._DB_PREFIX_ .'product.`id_product` = ' ._DB_PREFIX_ .'order_detail.`product_id`
-            WHERE ' ._DB_PREFIX_ .'order_detail.`id_order` ='. $orderId);
-        return $result;
-    }
-
-    public function getCarrier($carrierId){
-        $result = Db::getInstance()->executeS(
-            'SELECT ' .DB_PREFIX .'carrier.`name` 
-            FROM ' .DB_PREFIX .'carrier
-            WHERE ' .DB_PREFIX .'carrier.`id_carrier` ='. $carrierId);
-        return $result;
-    }
-
-    public function array_push_assoc($array, $key, $value){
-        $array[$key] = $value;
-        return $array;
-    }
-
-    public function getCarrierName($id_order)
+    public function hookActionCarrierUpdate($params)
     {
-        return Db::getInstance()->executeS('
-		SELECT
-		
-		cl.`name` as `carrier_name`
-		FROM `'._DB_PREFIX_.'order_carrier` oc
-		LEFT JOIN `'._DB_PREFIX_.'carrier` cl
-			ON (oc.`id_carrier` = cl.`id_carrier`)
-		WHERE oc.`id_order` = '.(int)$id_order);
+        $controller = $this->getHookController('actionCarrierUpdate');
+        return $controller->run($params);
+    }
 
+    public function hookDisplayCarrierList()
+    {
+        return "Test";
+//        $controller = $this->getHookController('displayCarrierList');
+//        return $controller->run();
+    }
+
+    public function hookDisplayAdminOrder($params)
+    {
+        $controller = $this->getHookController('displayAdminOrder');
+        return $controller->run();
     }
 
     public function countryCode($countryName)
@@ -628,4 +471,21 @@ class Frank extends CarrierModule
         }
     }
 
+    public function getCarrier($carrierId){
+        $result = Db::getInstance()->executeS(
+            'SELECT ' .DB_PREFIX .'carrier.`name` 
+            FROM ' .DB_PREFIX .'carrier
+            WHERE ' .DB_PREFIX .'carrier.`id_carrier` ='. $carrierId);
+        return $result;
+    }
+
+    public function activate()
+    {
+        return true;
+        $active = $this->frank_api->getRequests('https://p-post.herokuapp.com/api/v1/stores/myprofile/' . Configuration::get('FRANK_ID'), Configuration::get('FRANK_TOKEN'));
+        $active = json_decode($active, true);
+        if ($active['status'] === 200)
+            return $active['data']['active'];
+        return 'Something went wrong';
+    }
 }

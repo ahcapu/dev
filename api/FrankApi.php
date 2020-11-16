@@ -6,12 +6,36 @@ class FrankApi
     {
     }
 
+    public function uploadImage($url, $data, $token = null, $method = "POST")
+    {
+        if (strcmp($method, "GET") == 0) {
+            $url .= "?" . $data;
+        }
+
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+        // curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+        if ($token != null){
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+                "Authorization: Bearer " . $token,
+                "Content-Type: application/x-www-form-urlencoded"
+            ));
+        }else{
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array( "Content-Type: application/x-www-form-urlencoded" ));
+        }
+        $response = curl_exec($curl);
+        curl_close($curl);
+        return $response;
+    }
+
     public function doCurlRequest($url, $data, $token = null, $method = "POST")
     {
         if (strcmp($method, "GET") == 0) {
             $url .= "?" . $data;
         }
-        
+
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
         // curl_setopt($curl, CURLOPT_POST, true);
